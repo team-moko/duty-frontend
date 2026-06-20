@@ -1,3 +1,5 @@
+import * as styles from "./page.css";
+
 export default function Home() {
-  return <div />;
+  return <div className={styles.example}>Hello</div>;
 }
