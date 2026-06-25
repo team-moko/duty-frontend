@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon } from "./icons";
+import { CheckIcon } from "../icons";
 import * as styles from "./CheckRow.css";
 
 interface CheckRowProps {

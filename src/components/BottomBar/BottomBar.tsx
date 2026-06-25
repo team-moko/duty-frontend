@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ShareIcon } from "./icons";
+import { ShareIcon } from "../icons";
 import * as styles from "./BottomBar.css";
 
 interface BottomBarProps {
