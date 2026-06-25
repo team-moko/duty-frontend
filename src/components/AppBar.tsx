@@ -1,0 +1,60 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { ChevronLeftIcon } from "./icons";
+import * as styles from "./AppBar.css";
+
+interface AppBarProps {
+  title?: string;
+  /** 진행 단계 표시 (예: 1 / 2) */
+  step?: number;
+  totalSteps?: number;
+  /** hero(파랑) 위에 얹는 투명 바 */
+  accent?: boolean;
+  /** 뒤로가기 버튼 노출 (홈에서는 false) */
+  showBack?: boolean;
+  /** 타이틀 크게 (기본: 뒤로가기 없을 때 크게) */
+  large?: boolean;
+}
+
+export function AppBar({
+  title = "",
+  step,
+  totalSteps,
+  accent = false,
+  showBack = true,
+  large,
+}: AppBarProps) {
+  const router = useRouter();
+  const kind = accent ? "accent" : "solid";
+  const isLarge = large ?? !showBack;
+
+  return (
+    <div className={`${styles.barClass} ${styles.bar[kind]}`}>
+      <div className={`${styles.inner} ${!showBack ? styles.innerNoBack : ""}`}>
+        {showBack && (
+          <button
+            type="button"
+            className={styles.backBtn}
+            aria-label="뒤로가기"
+            onClick={() => router.back()}
+          >
+            <ChevronLeftIcon color={accent ? "#fff" : "#191F28"} />
+          </button>
+        )}
+        <div
+          className={`${styles.title[kind]} ${
+            isLarge ? styles.titleSize.large : styles.titleSize.small
+          }`}
+        >
+          {title}
+        </div>
+        {step != null && totalSteps != null && (
+          <div className={styles.step}>
+            <span className={styles.stepCurrent}>{step}</span> / {totalSteps}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
