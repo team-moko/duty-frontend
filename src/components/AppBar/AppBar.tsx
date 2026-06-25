@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChevronLeftIcon } from "./icons";
+import { ChevronLeftIcon } from "../icons";
 import * as styles from "./AppBar.css";
 
 interface AppBarProps {
