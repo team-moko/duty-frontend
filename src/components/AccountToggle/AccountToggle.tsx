@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { CheckIcon } from "../icons";
 import * as styles from "./AccountToggle.css";
 
@@ -14,6 +14,17 @@ interface AccountToggleProps {
 
 export function AccountToggle({ label, on, onToggle, children }: AccountToggleProps) {
   const stateKey = on ? "on" : "off";
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const prevOn = useRef(on);
+
+  useEffect(() => {
+    // off → on 전환 시 펼쳐진 첫 입력란에 포커스
+    if (on && !prevOn.current) {
+      bodyRef.current?.querySelector("input")?.focus();
+    }
+    prevOn.current = on;
+  }, [on]);
+
   return (
     <div className={`${styles.card} ${styles.state[stateKey]}`}>
       <button
@@ -29,7 +40,7 @@ export function AccountToggle({ label, on, onToggle, children }: AccountTogglePr
         <span className={styles.label}>{label}</span>
       </button>
       {on && children && (
-        <div className={styles.body}>
+        <div className={styles.body} ref={bodyRef}>
           <div className={styles.bodyDivider} />
           {children}
         </div>

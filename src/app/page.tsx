@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AppBar,
@@ -45,36 +45,46 @@ export default function ScreenInput() {
   const [idx, setIdx] = useState(0);
 
   // 기본 정보
-  const [age, setAge] = useState("35");
-  const [salary, setSalary] = useState("6000");
+  const [age, setAge] = useState("");
+  const [salary, setSalary] = useState("");
   const [incomeType, setIncomeType] = useState<IncomeType>("직장인");
 
   // 투자 현황
-  const [investTypes, setInvestTypes] = useState<string[]>([
-    "국내 상장주식",
-    "해외주식 (미국 등)",
-  ]);
+  const [investTypes, setInvestTypes] = useState<string[]>([]);
   const [noInvest, setNoInvest] = useState(false);
-  const [monthlyInvest, setMonthlyInvest] = useState("100");
-  const [risk, setRisk] = useState<RiskProfile>("공격형");
-  const [overseasGain, setOverseasGain] = useState("1500");
+  const [monthlyInvest, setMonthlyInvest] = useState("");
+  const [risk, setRisk] = useState<RiskProfile>("안정형");
+  const [overseasGain, setOverseasGain] = useState("");
 
   // 절세 계좌
-  const [hasPension, setHasPension] = useState(true);
-  const [pensionAnnual, setPensionAnnual] = useState("300");
+  const [hasPension, setHasPension] = useState(false);
+  const [pensionAnnual, setPensionAnnual] = useState("");
   const [hasIRP, setHasIRP] = useState(false);
+  const [irpAnnual, setIrpAnnual] = useState("");
   const [hasISA, setHasISA] = useState(false);
+  const [isaAnnual, setIsaAnnual] = useState("");
 
   // 소득·가족
-  const [financialIncome, setFinancialIncome] = useState("80");
-  const [dividendIncome, setDividendIncome] = useState("30");
+  const [financialIncome, setFinancialIncome] = useState("");
+  const [dividendIncome, setDividendIncome] = useState("");
   const [hasHighDividend, setHasHighDividend] = useState(false);
-  const [hasSpouse, setHasSpouse] = useState(true);
-  const [hasChild, setHasChild] = useState(true);
-  const [hasMinorChild, setHasMinorChild] = useState(true);
+  const [hasSpouse, setHasSpouse] = useState(false);
+  const [hasChild, setHasChild] = useState(false);
+  const [hasMinorChild, setHasMinorChild] = useState(false);
 
   const current = STEPS[idx]!;
   const last = idx === STEPS.length - 1;
+
+  // 스텝 전환 시 해당 스텝의 첫 입력란에 포커스 (초기 진입은 제외)
+  const formRef = useRef<HTMLDivElement>(null);
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    formRef.current?.querySelector("input")?.focus();
+  }, [idx]);
 
   const toggleInvestType = (type: string) => {
     setNoInvest(false);
@@ -117,7 +127,7 @@ export default function ScreenInput() {
         <h1 className={styles.title}>{current.title}</h1>
       </div>
 
-      <div className={styles.formCard}>
+      <div className={styles.formCard} ref={formRef}>
         {idx === 0 && (
           <div className={styles.stepCol}>
             <FieldRow label="나이">
@@ -209,8 +219,30 @@ export default function ScreenInput() {
                 />
               </FieldRow>
             </AccountToggle>
-            <AccountToggle label="IRP 보유" on={hasIRP} onToggle={() => setHasIRP((v) => !v)} />
-            <AccountToggle label="ISA 보유" on={hasISA} onToggle={() => setHasISA((v) => !v)} />
+            <AccountToggle label="IRP 보유" on={hasIRP} onToggle={() => setHasIRP((v) => !v)}>
+              <FieldRow label="IRP 연 납입액">
+                <InputBox
+                  value={irpAnnual === "" ? "" : won(irpAnnual)}
+                  onChange={(v) => setIrpAnnual(digitsOnly(v))}
+                  placeholder="0"
+                  suffix="만원"
+                  align="right"
+                  inputMode="numeric"
+                />
+              </FieldRow>
+            </AccountToggle>
+            <AccountToggle label="ISA 보유" on={hasISA} onToggle={() => setHasISA((v) => !v)}>
+              <FieldRow label="ISA 연 납입액">
+                <InputBox
+                  value={isaAnnual === "" ? "" : won(isaAnnual)}
+                  onChange={(v) => setIsaAnnual(digitsOnly(v))}
+                  placeholder="0"
+                  suffix="만원"
+                  align="right"
+                  inputMode="numeric"
+                />
+              </FieldRow>
+            </AccountToggle>
           </div>
         )}
 
@@ -247,7 +279,12 @@ export default function ScreenInput() {
                 <AccountToggle
                   label="자녀 있음"
                   on={hasChild}
-                  onToggle={() => setHasChild((v) => !v)}
+                  onToggle={() =>
+                    setHasChild((v) => {
+                      if (v) setHasMinorChild(false);
+                      return !v;
+                    })
+                  }
                 >
                   <CheckRow
                     label="미성년 자녀 포함"
