@@ -15,6 +15,8 @@ interface AppBarProps {
   showBack?: boolean;
   /** 타이틀 크게 (기본: 뒤로가기 없을 때 크게) */
   large?: boolean;
+  /** 뒤로가기 동작 커스텀 (미지정 시 router.back()) */
+  onBack?: () => void;
 }
 
 export function AppBar({
@@ -24,6 +26,7 @@ export function AppBar({
   accent = false,
   showBack = true,
   large,
+  onBack,
 }: AppBarProps) {
   const router = useRouter();
   const kind = accent ? "accent" : "solid";
@@ -37,7 +40,7 @@ export function AppBar({
             type="button"
             className={styles.backBtn}
             aria-label="뒤로가기"
-            onClick={() => router.back()}
+            onClick={onBack ?? (() => router.back())}
           >
             <ChevronLeftIcon color={accent ? "#fff" : "#191F28"} />
           </button>

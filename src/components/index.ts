@@ -9,5 +9,7 @@ export { RadioPill } from "./RadioPill/RadioPill";
 export { CheckRow } from "./CheckRow/CheckRow";
 export { RankBadge } from "./RankBadge/RankBadge";
 export { Segmented } from "./Segmented/Segmented";
+export { Tile } from "./Tile/Tile";
+export { AccountToggle } from "./AccountToggle/AccountToggle";
 export { BottomBar } from "./BottomBar/BottomBar";
 export { ChevronLeftIcon, ChevronRightIcon, CheckIcon, ShareIcon } from "./icons";

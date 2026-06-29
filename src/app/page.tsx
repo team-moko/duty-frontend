@@ -7,136 +7,277 @@ import {
   CTAButton,
   FieldRow,
   InputBox,
-  RadioPill,
-  CheckRow,
   Segmented,
-  BottomBar,
+  CheckRow,
+  Tile,
+  AccountToggle,
 } from "@/components";
 import { won, digitsOnly } from "@/lib/format";
 import * as styles from "./page.css";
 
-const ASSET_TABS = ["저축", "투자", "부동산"] as const;
-type AssetTab = (typeof ASSET_TABS)[number];
+const STEPS = [
+  { key: "basic", label: "기본 정보", title: "기본 정보를\n알려주세요" },
+  { key: "invest", label: "투자 현황", title: "투자는 어떻게\n하고 계세요?" },
+  { key: "account", label: "절세 계좌", title: "절세 계좌,\n이미 가지고 있나요?" },
+  { key: "family", label: "소득·가족", title: "소득과 가족\n정보를 알려주세요" },
+] as const;
 
-const MARRIAGE = ["미혼", "기혼"] as const;
-type Marriage = (typeof MARRIAGE)[number];
+const INCOME_TYPES = ["직장인", "사업자", "기타"] as const;
+type IncomeType = (typeof INCOME_TYPES)[number];
+
+const RISK_PROFILES = ["안정형", "중립형", "공격형"] as const;
+type RiskProfile = (typeof RISK_PROFILES)[number];
+
+const INVEST_TYPES = [
+  "국내 상장주식",
+  "해외주식 (미국 등)",
+  "국내주식형 ETF",
+  "국내 상장 해외지수 ETF",
+  "공모펀드",
+  "예·적금",
+  "채권",
+  "리츠",
+] as const;
+const NONE_OF_INVEST = "해당 없음 (투자 중인 종목이 없어요)";
 
 export default function ScreenInput() {
   const router = useRouter();
+  const [idx, setIdx] = useState(0);
 
-  const [birthYear, setBirthYear] = useState("1996");
-  const [salary, setSalary] = useState("4200");
-  const [assetTab, setAssetTab] = useState<AssetTab>("저축");
-  const [assets, setAssets] = useState<Record<AssetTab, string>>({
-    저축: "4000",
-    투자: "1000",
-    부동산: "",
-  });
-  const [married, setMarried] = useState<Marriage>("미혼");
-  const [isNewlywed, setIsNewlywed] = useState(false);
-  const [dependents, setDependents] = useState("0");
-  const [isDisabled, setIsDisabled] = useState(false);
-  const [isVeteran, setIsVeteran] = useState(false);
+  // 기본 정보
+  const [age, setAge] = useState("35");
+  const [salary, setSalary] = useState("6000");
+  const [incomeType, setIncomeType] = useState<IncomeType>("직장인");
 
-  const assetSummary = ASSET_TABS.filter((k) => assets[k] !== "")
-    .map((k) => `${k} ${won(assets[k])}`)
-    .join(" · ");
+  // 투자 현황
+  const [investTypes, setInvestTypes] = useState<string[]>([
+    "국내 상장주식",
+    "해외주식 (미국 등)",
+  ]);
+  const [noInvest, setNoInvest] = useState(false);
+  const [monthlyInvest, setMonthlyInvest] = useState("100");
+  const [risk, setRisk] = useState<RiskProfile>("공격형");
+  const [overseasGain, setOverseasGain] = useState("1500");
+
+  // 절세 계좌
+  const [hasPension, setHasPension] = useState(true);
+  const [pensionAnnual, setPensionAnnual] = useState("300");
+  const [hasIRP, setHasIRP] = useState(false);
+  const [hasISA, setHasISA] = useState(false);
+
+  // 소득·가족
+  const [financialIncome, setFinancialIncome] = useState("80");
+  const [dividendIncome, setDividendIncome] = useState("30");
+  const [hasHighDividend, setHasHighDividend] = useState(false);
+  const [hasSpouse, setHasSpouse] = useState(true);
+  const [hasChild, setHasChild] = useState(true);
+  const [hasMinorChild, setHasMinorChild] = useState(true);
+
+  const current = STEPS[idx]!;
+  const last = idx === STEPS.length - 1;
+
+  const toggleInvestType = (type: string) => {
+    setNoInvest(false);
+    setInvestTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+    );
+  };
+
+  const toggleNoInvest = () => {
+    setNoInvest((prev) => {
+      const next = !prev;
+      if (next) setInvestTypes([]);
+      return next;
+    });
+  };
+
+  const goNext = () => (last ? router.push("/result") : setIdx((i) => i + 1));
+  const goPrev = () => setIdx((i) => Math.max(0, i - 1));
 
   return (
     <div className={styles.screen}>
-      <AppBar title="내 절세 전략 찾기" step={1} totalSteps={2} showBack={false} />
+      <div className={styles.topFixed}>
+        <AppBar title="내 절세 전략 찾기" showBack={idx > 0} onBack={goPrev} />
+        <div className={styles.progress}>
+          <div className={styles.progressBars}>
+            {STEPS.map((s, i) => (
+              <div key={s.key} className={i <= idx ? styles.bar.on : styles.bar.off} />
+            ))}
+          </div>
+          <div className={styles.progressMeta}>
+            <span className={styles.progressLabel}>{current.label}</span>
+            <span className={styles.progressCount}>
+              <span className={styles.progressCurrent}>{idx + 1}</span> / {STEPS.length}
+            </span>
+          </div>
+        </div>
+      </div>
 
-      <div className={styles.intro}>
-        <h1 className={styles.title}>
-          내 상황을 알려주시면
-          <br />
-          가장 유리한 절세 조합을
-          <br />
-          찾아드릴게요
-        </h1>
-        <p className={styles.subtitle}>입력한 정보는 계산에만 쓰이고 저장되지 않아요.</p>
+      <div className={styles.header}>
+        <h1 className={styles.title}>{current.title}</h1>
       </div>
 
       <div className={styles.formCard}>
-        <FieldRow label="태어난 해" hint="만 나이로 청년 혜택을 판별해요">
-          <InputBox
-            value={birthYear}
-            onChange={(v) => setBirthYear(digitsOnly(v).slice(0, 4))}
-            placeholder="예) 1996"
-            suffix="년생"
-            inputMode="numeric"
-          />
-        </FieldRow>
-
-        <FieldRow label="연봉" hint="세전 총급여 기준">
-          <InputBox
-            value={salary === "" ? "" : won(salary)}
-            onChange={(v) => setSalary(digitsOnly(v))}
-            placeholder="0"
-            suffix="만원"
-            align="right"
-            strong
-            inputMode="numeric"
-          />
-        </FieldRow>
-
-        <FieldRow label="보유 자산">
-          <div className={styles.assetCol}>
-            <Segmented options={ASSET_TABS} value={assetTab} onChange={setAssetTab} />
-            <InputBox
-              value={assets[assetTab] === "" ? "" : won(assets[assetTab])}
-              onChange={(v) => setAssets((prev) => ({ ...prev, [assetTab]: digitsOnly(v) }))}
-              placeholder="0"
-              suffix="만원"
-              align="right"
-              strong
-              inputMode="numeric"
-            />
-            <div className={styles.assetSummary}>
-              <span className={styles.assetSummaryLabel}>입력한 자산</span>
-              <div className={styles.assetSummaryDivider} />
-              <span className={styles.assetSummaryValue}>
-                {assetSummary ? `${assetSummary}만원` : "아직 없어요"}
-              </span>
-            </div>
+        {idx === 0 && (
+          <div className={styles.stepCol}>
+            <FieldRow label="나이">
+              <InputBox
+                value={age}
+                onChange={(v) => setAge(digitsOnly(v).slice(0, 3))}
+                placeholder="0"
+                suffix="세"
+                align="right"
+                inputMode="numeric"
+              />
+            </FieldRow>
+            <FieldRow label="연봉" hint="세전 총급여 기준">
+              <InputBox
+                value={salary === "" ? "" : won(salary)}
+                onChange={(v) => setSalary(digitsOnly(v))}
+                placeholder="0"
+                suffix="만원"
+                align="right"
+                strong
+                inputMode="numeric"
+              />
+            </FieldRow>
+            <FieldRow label="소득 유형">
+              <Segmented options={INCOME_TYPES} value={incomeType} onChange={setIncomeType} />
+            </FieldRow>
           </div>
-        </FieldRow>
+        )}
 
-        <div className={styles.divider} />
-
-        <FieldRow label="결혼 여부">
-          <RadioPill options={MARRIAGE} value={married} onChange={setMarried} />
-          <div className={styles.newlywedGap} />
-          <CheckRow
-            label="신혼이에요"
-            sub="혼인신고 후 3년 이하"
-            checked={isNewlywed}
-            onChange={setIsNewlywed}
-          />
-        </FieldRow>
-
-        <FieldRow label="부양가족 수" hint="본인 제외, 기본공제 대상">
-          <InputBox
-            value={dependents === "" ? "" : won(dependents)}
-            onChange={(v) => setDependents(digitsOnly(v))}
-            placeholder="0"
-            suffix="명"
-            align="right"
-            inputMode="numeric"
-          />
-        </FieldRow>
-
-        <FieldRow label="해당사항" hint="추가 비과세 한도가 적용돼요">
-          <div className={styles.checkCol}>
-            <CheckRow label="장애인" checked={isDisabled} onChange={setIsDisabled} />
-            <CheckRow label="국가유공자" checked={isVeteran} onChange={setIsVeteran} />
+        {idx === 1 && (
+          <div className={styles.stepCol}>
+            <FieldRow label="보유 투자 유형" hint="해당하는 항목을 모두 선택하세요">
+              <div className={styles.investGrid}>
+                {INVEST_TYPES.map((type) => (
+                  <Tile
+                    key={type}
+                    label={type}
+                    on={investTypes.includes(type)}
+                    onClick={() => toggleInvestType(type)}
+                  />
+                ))}
+                <Tile label={NONE_OF_INVEST} on={noInvest} onClick={toggleNoInvest} full />
+              </div>
+            </FieldRow>
+            <FieldRow label="월 투자 가능액">
+              <InputBox
+                value={monthlyInvest === "" ? "" : won(monthlyInvest)}
+                onChange={(v) => setMonthlyInvest(digitsOnly(v))}
+                placeholder="0"
+                suffix="만원"
+                align="right"
+                inputMode="numeric"
+              />
+            </FieldRow>
+            <FieldRow label="투자 성향">
+              <Segmented options={RISK_PROFILES} value={risk} onChange={setRisk} />
+            </FieldRow>
+            <FieldRow label="해외주식 미실현 수익" hint="양도소득세 절세 판단에 쓰여요">
+              <InputBox
+                value={overseasGain === "" ? "" : won(overseasGain)}
+                onChange={(v) => setOverseasGain(digitsOnly(v))}
+                placeholder="0"
+                suffix="만원"
+                align="right"
+                inputMode="numeric"
+              />
+            </FieldRow>
           </div>
-        </FieldRow>
+        )}
+
+        {idx === 2 && (
+          <div className={styles.stepColTight}>
+            <p className={styles.accountIntro}>
+              이미 가입한 계좌가 있다면 알려주세요. 남은 납입 한도를 계산에 반영해요.
+            </p>
+            <AccountToggle
+              label="연금저축 보유"
+              on={hasPension}
+              onToggle={() => setHasPension((v) => !v)}
+            >
+              <FieldRow label="연금저축 연 납입액 (최대 600만원)">
+                <InputBox
+                  value={pensionAnnual === "" ? "" : won(pensionAnnual)}
+                  onChange={(v) => setPensionAnnual(digitsOnly(v))}
+                  placeholder="0"
+                  suffix="만원"
+                  align="right"
+                  inputMode="numeric"
+                />
+              </FieldRow>
+            </AccountToggle>
+            <AccountToggle label="IRP 보유" on={hasIRP} onToggle={() => setHasIRP((v) => !v)} />
+            <AccountToggle label="ISA 보유" on={hasISA} onToggle={() => setHasISA((v) => !v)} />
+          </div>
+        )}
+
+        {idx === 3 && (
+          <div className={styles.stepCol}>
+            <FieldRow label="연 금융소득" hint="이자 + 배당 합산">
+              <InputBox
+                value={financialIncome === "" ? "" : won(financialIncome)}
+                onChange={(v) => setFinancialIncome(digitsOnly(v))}
+                placeholder="0"
+                suffix="만원"
+                align="right"
+                inputMode="numeric"
+              />
+            </FieldRow>
+            <FieldRow label="연 배당소득">
+              <InputBox
+                value={dividendIncome === "" ? "" : won(dividendIncome)}
+                onChange={(v) => setDividendIncome(digitsOnly(v))}
+                placeholder="0"
+                suffix="만원"
+                align="right"
+                inputMode="numeric"
+              />
+            </FieldRow>
+            <FieldRow label="해당사항">
+              <div className={styles.checkCol}>
+                <CheckRow
+                  label="고배당주 보유"
+                  checked={hasHighDividend}
+                  onChange={setHasHighDividend}
+                />
+                <CheckRow label="배우자 있음" checked={hasSpouse} onChange={setHasSpouse} />
+                <AccountToggle
+                  label="자녀 있음"
+                  on={hasChild}
+                  onToggle={() => setHasChild((v) => !v)}
+                >
+                  <CheckRow
+                    label="미성년 자녀 포함"
+                    checked={hasMinorChild}
+                    onChange={setHasMinorChild}
+                    compact
+                  />
+                </AccountToggle>
+              </div>
+            </FieldRow>
+          </div>
+        )}
       </div>
 
-      <BottomBar tone="white">
-        <CTAButton onClick={() => router.push("/result")}>내 절세 전략 보기</CTAButton>
-      </BottomBar>
+      <div className={styles.nav}>
+        {last ? (
+          <CTAButton onClick={goNext}>내 절세 전략 보기</CTAButton>
+        ) : (
+          <div className={styles.navRow}>
+            {idx > 0 && (
+              <button type="button" className={styles.prevBtn} onClick={goPrev}>
+                이전
+              </button>
+            )}
+            <div className={styles.nextWrap}>
+              <CTAButton onClick={goNext}>다음</CTAButton>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
