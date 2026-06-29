@@ -1,25 +1,38 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
+  postRecommendCombos,
+  type RecommendCombosRequest,
+} from "@/api/recommend";
+import {
+  AccountToggle,
   AppBar,
+  CheckRow,
   CTAButton,
   FieldRow,
   InputBox,
   Segmented,
-  CheckRow,
   Tile,
-  AccountToggle,
 } from "@/components";
-import { won, digitsOnly } from "@/lib/format";
+import { digitsOnly, won } from "@/lib/format";
+import { saveRecommendResult } from "@/lib/recommend";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import * as styles from "./page.css";
 
 const STEPS = [
   { key: "basic", label: "기본 정보", title: "기본 정보를\n알려주세요" },
   { key: "invest", label: "투자 현황", title: "투자는 어떻게\n하고 계세요?" },
-  { key: "account", label: "절세 계좌", title: "절세 계좌,\n이미 가지고 있나요?" },
-  { key: "family", label: "소득·가족", title: "소득과 가족\n정보를 알려주세요" },
+  {
+    key: "account",
+    label: "절세 계좌",
+    title: "절세 계좌,\n이미 가지고 있나요?",
+  },
+  {
+    key: "family",
+    label: "소득·가족",
+    title: "소득과 가족\n정보를 알려주세요",
+  },
 ] as const;
 
 const INCOME_TYPES = ["직장인", "사업자", "기타"] as const;
@@ -38,7 +51,39 @@ const INVEST_TYPES = [
   "채권",
   "리츠",
 ] as const;
-const NONE_OF_INVEST = "해당 없음 (투자 중인 종목이 없어요)";
+type InvestType = (typeof INVEST_TYPES)[number];
+
+const INCOME_TYPE_VALUES: Record<
+  IncomeType,
+  RecommendCombosRequest["income_type"]
+> = {
+  직장인: "employee",
+  사업자: "freelancer",
+  기타: "none",
+};
+
+const INVEST_TYPE_VALUES: Record<
+  InvestType,
+  RecommendCombosRequest["invest_types"][number]
+> = {
+  "국내 상장주식": "domestic_stock",
+  "해외주식 (미국 등)": "foreign_stock",
+  "국내주식형 ETF": "etf_domestic",
+  "국내 상장 해외지수 ETF": "etf_foreign",
+  공모펀드: "fund",
+  "예·적금": "deposit",
+  채권: "bond",
+  리츠: "reit",
+};
+
+const RISK_PROFILE_VALUES: Record<
+  RiskProfile,
+  RecommendCombosRequest["risk_tolerance"]
+> = {
+  안정형: "low",
+  중립형: "medium",
+  공격형: "high",
+};
 
 export default function ScreenInput() {
   const router = useRouter();
@@ -50,8 +95,7 @@ export default function ScreenInput() {
   const [incomeType, setIncomeType] = useState<IncomeType>("직장인");
 
   // 투자 현황
-  const [investTypes, setInvestTypes] = useState<string[]>([]);
-  const [noInvest, setNoInvest] = useState(false);
+  const [investTypes, setInvestTypes] = useState<InvestType[]>([]);
   const [monthlyInvest, setMonthlyInvest] = useState("");
   const [risk, setRisk] = useState<RiskProfile>("안정형");
   const [overseasGain, setOverseasGain] = useState("");
@@ -62,7 +106,6 @@ export default function ScreenInput() {
   const [hasIRP, setHasIRP] = useState(false);
   const [irpAnnual, setIrpAnnual] = useState("");
   const [hasISA, setHasISA] = useState(false);
-  const [isaAnnual, setIsaAnnual] = useState("");
 
   // 소득·가족
   const [financialIncome, setFinancialIncome] = useState("");
@@ -71,6 +114,8 @@ export default function ScreenInput() {
   const [hasSpouse, setHasSpouse] = useState(false);
   const [hasChild, setHasChild] = useState(false);
   const [hasMinorChild, setHasMinorChild] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const current = STEPS[idx]!;
   const last = idx === STEPS.length - 1;
@@ -86,23 +131,62 @@ export default function ScreenInput() {
     formRef.current?.querySelector("input")?.focus();
   }, [idx]);
 
-  const toggleInvestType = (type: string) => {
-    setNoInvest(false);
+  const toggleInvestType = (type: InvestType) => {
     setInvestTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
   };
 
-  const toggleNoInvest = () => {
-    setNoInvest((prev) => {
-      const next = !prev;
-      if (next) setInvestTypes([]);
-      return next;
-    });
+  const submitRecommend = async () => {
+    const body: RecommendCombosRequest = {
+      age: Number(age),
+      annual_salary: Number(salary || 0),
+      income_type: INCOME_TYPE_VALUES[incomeType],
+      invest_types: investTypes.map((type) => INVEST_TYPE_VALUES[type]),
+      monthly_invest: Number(monthlyInvest || 0),
+      has_isa: hasISA,
+      has_pension: hasPension,
+      has_irp: hasIRP,
+      pension_contribution: hasPension ? Number(pensionAnnual || 0) : 0,
+      irp_contribution: hasIRP ? Number(irpAnnual || 0) : 0,
+      financial_income: Number(financialIncome || 0),
+      risk_tolerance: RISK_PROFILE_VALUES[risk],
+      has_spouse: hasSpouse,
+      has_children: hasChild,
+      has_minor_children: hasChild && hasMinorChild,
+      foreign_stock_unrealized_profit: Number(overseasGain || 0),
+      dividend_income: Number(dividendIncome || 0),
+      holds_high_dividend: hasHighDividend,
+    };
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const data = await postRecommendCombos(body);
+      saveRecommendResult(data);
+      router.push("/result");
+    } catch {
+      setSubmitError(
+        "추천 결과를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const goNext = () => (last ? router.push("/result") : setIdx((i) => i + 1));
-  const goPrev = () => setIdx((i) => Math.max(0, i - 1));
+  const goNext = () => {
+    setSubmitError(null);
+    if (last) {
+      submitRecommend();
+      return;
+    }
+    setIdx((i) => i + 1);
+  };
+  const goPrev = () => {
+    setSubmitError(null);
+    setIdx((i) => Math.max(0, i - 1));
+  };
 
   return (
     <div className={styles.screen}>
@@ -111,13 +195,17 @@ export default function ScreenInput() {
         <div className={styles.progress}>
           <div className={styles.progressBars}>
             {STEPS.map((s, i) => (
-              <div key={s.key} className={i <= idx ? styles.bar.on : styles.bar.off} />
+              <div
+                key={s.key}
+                className={i <= idx ? styles.bar.on : styles.bar.off}
+              />
             ))}
           </div>
           <div className={styles.progressMeta}>
             <span className={styles.progressLabel}>{current.label}</span>
             <span className={styles.progressCount}>
-              <span className={styles.progressCurrent}>{idx + 1}</span> / {STEPS.length}
+              <span className={styles.progressCurrent}>{idx + 1}</span> /{" "}
+              {STEPS.length}
             </span>
           </div>
         </div>
@@ -152,14 +240,21 @@ export default function ScreenInput() {
               />
             </FieldRow>
             <FieldRow label="소득 유형">
-              <Segmented options={INCOME_TYPES} value={incomeType} onChange={setIncomeType} />
+              <Segmented
+                options={INCOME_TYPES}
+                value={incomeType}
+                onChange={setIncomeType}
+              />
             </FieldRow>
           </div>
         )}
 
         {idx === 1 && (
           <div className={styles.stepCol}>
-            <FieldRow label="보유 투자 유형" hint="해당하는 항목을 모두 선택하세요">
+            <FieldRow
+              label="보유 투자 유형"
+              hint="해당하는 항목을 모두 선택하세요"
+            >
               <div className={styles.investGrid}>
                 {INVEST_TYPES.map((type) => (
                   <Tile
@@ -169,7 +264,6 @@ export default function ScreenInput() {
                     onClick={() => toggleInvestType(type)}
                   />
                 ))}
-                <Tile label={NONE_OF_INVEST} on={noInvest} onClick={toggleNoInvest} full />
               </div>
             </FieldRow>
             <FieldRow label="월 투자 가능액">
@@ -183,9 +277,16 @@ export default function ScreenInput() {
               />
             </FieldRow>
             <FieldRow label="투자 성향">
-              <Segmented options={RISK_PROFILES} value={risk} onChange={setRisk} />
+              <Segmented
+                options={RISK_PROFILES}
+                value={risk}
+                onChange={setRisk}
+              />
             </FieldRow>
-            <FieldRow label="해외주식 미실현 수익" hint="양도소득세 절세 판단에 쓰여요">
+            <FieldRow
+              label="해외주식 미실현 수익"
+              hint="양도소득세 절세 판단에 쓰여요"
+            >
               <InputBox
                 value={overseasGain === "" ? "" : won(overseasGain)}
                 onChange={(v) => setOverseasGain(digitsOnly(v))}
@@ -201,7 +302,8 @@ export default function ScreenInput() {
         {idx === 2 && (
           <div className={styles.stepColTight}>
             <p className={styles.accountIntro}>
-              이미 가입한 계좌가 있다면 알려주세요. 남은 납입 한도를 계산에 반영해요.
+              이미 가입한 계좌가 있다면 알려주세요. 남은 납입 한도를 계산에
+              반영해요.
             </p>
             <AccountToggle
               label="연금저축 보유"
@@ -219,8 +321,12 @@ export default function ScreenInput() {
                 />
               </FieldRow>
             </AccountToggle>
-            <AccountToggle label="IRP 보유" on={hasIRP} onToggle={() => setHasIRP((v) => !v)}>
-              <FieldRow label="IRP 연 납입액">
+            <AccountToggle
+              label="IRP 보유"
+              on={hasIRP}
+              onToggle={() => setHasIRP((v) => !v)}
+            >
+              <FieldRow label="IRP 연 납입액 (최대 300만원)">
                 <InputBox
                   value={irpAnnual === "" ? "" : won(irpAnnual)}
                   onChange={(v) => setIrpAnnual(digitsOnly(v))}
@@ -231,18 +337,11 @@ export default function ScreenInput() {
                 />
               </FieldRow>
             </AccountToggle>
-            <AccountToggle label="ISA 보유" on={hasISA} onToggle={() => setHasISA((v) => !v)}>
-              <FieldRow label="ISA 연 납입액">
-                <InputBox
-                  value={isaAnnual === "" ? "" : won(isaAnnual)}
-                  onChange={(v) => setIsaAnnual(digitsOnly(v))}
-                  placeholder="0"
-                  suffix="만원"
-                  align="right"
-                  inputMode="numeric"
-                />
-              </FieldRow>
-            </AccountToggle>
+            <AccountToggle
+              label="ISA 보유"
+              on={hasISA}
+              onToggle={() => setHasISA((v) => !v)}
+            />
           </div>
         )}
 
@@ -275,7 +374,11 @@ export default function ScreenInput() {
                   checked={hasHighDividend}
                   onChange={setHasHighDividend}
                 />
-                <CheckRow label="배우자 있음" checked={hasSpouse} onChange={setHasSpouse} />
+                <CheckRow
+                  label="배우자 있음"
+                  checked={hasSpouse}
+                  onChange={setHasSpouse}
+                />
                 <AccountToggle
                   label="자녀 있음"
                   on={hasChild}
@@ -300,8 +403,15 @@ export default function ScreenInput() {
       </div>
 
       <div className={styles.nav}>
+        {submitError && (
+          <p className={styles.submitError} role="alert">
+            {submitError}
+          </p>
+        )}
         {last ? (
-          <CTAButton onClick={goNext}>내 절세 전략 보기</CTAButton>
+          <CTAButton onClick={goNext} disabled={isSubmitting}>
+            {isSubmitting ? "추천 결과 불러오는 중..." : "내 절세 전략 보기"}
+          </CTAButton>
         ) : (
           <div className={styles.navRow}>
             {idx > 0 && (
