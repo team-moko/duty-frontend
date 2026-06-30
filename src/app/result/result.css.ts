@@ -1,11 +1,26 @@
-import { style } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
+import { style } from "@vanilla-extract/css";
 
 export const screen = style({
   minHeight: "100dvh",
   background: vars.color.appBg,
   display: "flex",
   flexDirection: "column",
+});
+
+export const loading = style({
+  margin: 0,
+  color: vars.color.ink3,
+  fontSize: 14,
+  fontWeight: 600,
+  textAlign: "center",
+});
+
+export const empty = style({
+  margin: "48px 20px",
+  display: "flex",
+  flexDirection: "column",
+  gap: 18,
 });
 
 export const hero = style({

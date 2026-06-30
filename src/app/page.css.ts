@@ -1,5 +1,5 @@
-import { style, styleVariants } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
+import { style, styleVariants } from "@vanilla-extract/css";
 
 export const screen = style({
   minHeight: "100dvh",
@@ -127,6 +127,16 @@ export const nav = style({
   bottom: 0,
   padding: "14px 20px 30px",
   background: vars.color.white,
+});
+
+export const submitError = style({
+  margin: "0 0 10px",
+  color: "red",
+  fontSize: 13,
+  fontWeight: 600,
+  lineHeight: 1.4,
+  textAlign: "center",
+  whiteSpace: "pre-line",
 });
 
 export const navRow = style({

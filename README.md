@@ -31,6 +31,9 @@ duty-frontend/
 │  │        ├─ ComboDetail.tsx  # 상세 뷰 (클라이언트)
 │  │        └─ detail.css.ts
 │  │
+│  ├─ api/
+│  │  └─ recommend.ts          # 조합 추천 API 타입·호출 레이어
+│  │
 │  ├─ components/               # 공통 컴포넌트 팩 (.tsx + .css.ts 쌍)
 │  │  ├─ index.ts               # 배럴 export
 │  │  ├─ AppBar / CTAButton / InputBox / RadioPill / CheckRow
@@ -39,10 +42,9 @@ duty-frontend/
 │  │
 │  ├─ styles/
 │  │  └─ theme.css.ts           # 디자인 토큰 (createGlobalTheme → CSS 변수)
-│  ├─ data/
-│  │  └─ combos.ts              # 절세 조합 예시 데이터 (실제 계산 로직 교체 대상)
 │  ├─ lib/
-│  │  └─ format.ts              # 숫자 포맷 헬퍼 (won, digitsOnly)
+│  │  ├─ format.ts              # 숫자 포맷 헬퍼 (won, digitsOnly)
+│  │  └─ recommend.ts           # 추천 결과 세션 저장·포맷 헬퍼
 │  └─ fonts/
 │     └─ PretendardVariable.woff2   # self-host 폰트
 │
@@ -100,7 +102,11 @@ nvm use            # .nvmrc → Node 24
 # 1. 의존성 설치
 pnpm install
 
-# 2. 개발 서버 (http://localhost:3000)
+# 2. 환경변수 설정
+cp .env.example .env.local
+# .env.local의 API_BASE_URL을 실제 백엔드 주소로 변경
+
+# 3. 개발 서버 (http://localhost:3000)
 pnpm dev
 ```
 
