@@ -11,6 +11,7 @@ export const track = style({
 });
 
 const tabBase = style({
+  position: "relative",
   flex: 1,
   height: 40,
   borderRadius: 10,
@@ -22,19 +23,30 @@ const tabBase = style({
   fontSize: 14.5,
   fontWeight: 700,
   letterSpacing: "-0.02em",
-  transition: "background 0.12s ease, box-shadow 0.12s ease, color 0.12s ease",
+  background: "transparent",
+  transition: "color 0.15s ease",
 });
 
 export const state = styleVariants({
   on: {
-    background: vars.color.white,
-    boxShadow: "0 1px 3px rgba(25,31,40,0.1)",
     color: vars.color.ink,
   },
   off: {
-    background: "transparent",
     color: vars.color.ink3,
   },
+});
+
+export const pill = style({
+  position: "absolute",
+  inset: 0,
+  background: vars.color.white,
+  borderRadius: 10,
+  boxShadow: "0 1px 3px rgba(25,31,40,0.1)",
+});
+
+export const label = style({
+  position: "relative",
+  zIndex: 1,
 });
 
 export const tab = tabBase;
