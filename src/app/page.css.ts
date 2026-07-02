@@ -1,5 +1,5 @@
 import { vars } from "@/styles/theme.css";
-import { style, styleVariants } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 
 export const screen = style({
   minHeight: "100dvh",
@@ -28,16 +28,19 @@ export const progressBars = style({
   marginBottom: 10,
 });
 
-const barBase = style({
+export const barTrack = style({
   flex: 1,
   height: 4,
   borderRadius: vars.radius.pill,
-  transition: "background 0.2s ease",
+  background: vars.color.line,
+  overflow: "hidden",
 });
 
-export const bar = styleVariants({
-  on: [barBase, { background: vars.color.blue }],
-  off: [barBase, { background: vars.color.line }],
+export const barFill = style({
+  width: "100%",
+  height: "100%",
+  background: vars.color.blue,
+  transformOrigin: "left",
 });
 
 export const progressMeta = style({

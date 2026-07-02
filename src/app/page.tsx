@@ -15,6 +15,7 @@ import {
   Tile,
 } from "@/components";
 import { digitsOnly, won } from "@/lib/format";
+import { motion } from "framer-motion";
 import { saveRecommendResult } from "@/lib/recommend";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -195,10 +196,14 @@ export default function ScreenInput() {
         <div className={styles.progress}>
           <div className={styles.progressBars}>
             {STEPS.map((s, i) => (
-              <div
-                key={s.key}
-                className={i <= idx ? styles.bar.on : styles.bar.off}
-              />
+              <div key={s.key} className={styles.barTrack}>
+                <motion.div
+                  className={styles.barFill}
+                  initial={false}
+                  animate={{ scaleX: i <= idx ? 1 : 0 }}
+                  transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+                />
+              </div>
             ))}
           </div>
           <div className={styles.progressMeta}>

@@ -8,9 +8,23 @@ import {
   getServerRecommendResultSnapshot,
   subscribeRecommendResult,
 } from "@/lib/recommend";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 import * as styles from "./detail.css";
+
+function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 32 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1], delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function SectionTitle({ children, sub }: { children: string; sub?: string }) {
   return (
@@ -215,9 +229,15 @@ export function ComboDetail({ rank }: { rank: number }) {
       </div>
 
       <div className={styles.body}>
-        <PriorityList combo={combo} />
-        <EffectCard combo={combo} />
-        <ReasonsCard combo={combo} />
+        <Reveal>
+          <PriorityList combo={combo} />
+        </Reveal>
+        <Reveal delay={0.08}>
+          <EffectCard combo={combo} />
+        </Reveal>
+        <Reveal delay={0.16}>
+          <ReasonsCard combo={combo} />
+        </Reveal>
       </div>
 
       <BottomBar tone="app" onShare={handleShare}>

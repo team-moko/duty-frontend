@@ -7,6 +7,7 @@ import {
   getServerRecommendResultSnapshot,
   subscribeRecommendResult,
 } from "@/lib/recommend";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { ComboCard } from "./ComboCard";
@@ -77,12 +78,23 @@ export default function ScreenResult() {
           <h2 className={styles.listTitle}>유리한 조합 순위</h2>
           <span className={styles.listHint}>환급률 높은 순</span>
         </div>
-        {result.combos.map((combo) => (
-          <ComboCard
+        {result.combos.map((combo, i) => (
+          <motion.div
             key={combo.rank}
-            combo={combo}
-            onClick={() => router.push(`/result/${combo.rank}`)}
-          />
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{
+              duration: 0.55,
+              ease: [0.32, 0.72, 0, 1],
+              delay: Math.min(i * 0.08, 0.24),
+            }}
+          >
+            <ComboCard
+              combo={combo}
+              onClick={() => router.push(`/result/${combo.rank}`)}
+            />
+          </motion.div>
         ))}
       </div>
 
