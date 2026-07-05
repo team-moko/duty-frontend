@@ -10,6 +10,7 @@ import {
   CheckRow,
   CTAButton,
   FieldRow,
+  FixedTopBar,
   InputBox,
   Segmented,
   Tile,
@@ -17,9 +18,8 @@ import {
 import { digitsOnly, won } from "@/lib/format";
 import { motion } from "framer-motion";
 import { saveRecommendResult } from "@/lib/recommend";
-import { useScrolled } from "@/lib/useScrolled";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as styles from "./page.css";
 
 const STEPS = [
@@ -89,8 +89,19 @@ const RISK_PROFILE_VALUES: Record<
 
 export default function ScreenInput() {
   const router = useRouter();
-  const scrolled = useScrolled();
   const [idx, setIdx] = useState(0);
+
+  // 고정 헤더가 흐름에서 빠지므로 그 높이만큼 하단 콘텐츠에 여백을 확보한다.
+  const topFixedRef = useRef<HTMLDivElement>(null);
+  const [topFixedH, setTopFixedH] = useState(0);
+  useEffect(() => {
+    const el = topFixedRef.current;
+    if (!el) return;
+    setTopFixedH(el.offsetHeight);
+    const observer = new ResizeObserver(() => setTopFixedH(el.offsetHeight));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // 기본 정보
   const [age, setAge] = useState("");
@@ -195,9 +206,7 @@ export default function ScreenInput() {
 
   return (
     <div className={styles.screen}>
-      <div
-        className={`${styles.topFixed} ${scrolled ? styles.topFixedScrolled : ""}`}
-      >
+      <FixedTopBar variant="solid" ref={topFixedRef}>
         <AppBar title="내 절세 전략 찾기" showBack={idx > 0} onBack={goPrev} />
         <div className={styles.progress}>
           <div className={styles.progressBars}>
@@ -220,7 +229,13 @@ export default function ScreenInput() {
             </span>
           </div>
         </div>
-      </div>
+      </FixedTopBar>
+
+      <div
+        className={styles.topSpacer}
+        style={{ height: topFixedH }}
+        aria-hidden
+      />
 
       <div className={styles.header}>
         <h1 className={styles.title}>{current.title}</h1>

@@ -1,13 +1,12 @@
 "use client";
 
-import { AppBar, CTAButton } from "@/components";
+import { AppBar, CTAButton, FixedTopBar } from "@/components";
 import {
   formatExpectedBenefit,
   getRecommendResultSnapshot,
   getServerRecommendResultSnapshot,
   subscribeRecommendResult,
 } from "@/lib/recommend";
-import { useScrolled } from "@/lib/useScrolled";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
@@ -16,7 +15,6 @@ import * as styles from "./result.css";
 
 export default function ScreenResult() {
   const router = useRouter();
-  const scrolled = useScrolled();
   const result = useSyncExternalStore(
     subscribeRecommendResult,
     getRecommendResultSnapshot,
@@ -39,11 +37,9 @@ export default function ScreenResult() {
 
   return (
     <div className={styles.screen}>
-      <div
-        className={`${styles.topBar} ${scrolled ? styles.topBarScrolled : ""}`}
-      >
+      <FixedTopBar variant="accent">
         <AppBar title="추천 결과" accent />
-      </div>
+      </FixedTopBar>
       <div className={styles.hero}>
         <div className={styles.heroBody}>
           <p className={styles.persona}>{result.profile_summary}</p>

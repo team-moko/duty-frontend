@@ -9,6 +9,8 @@ export const screen = style({
 });
 
 export const hero = style({
+  // 고정 AppBar(약 58px) 높이만큼 상단 여백 확보.
+  paddingTop: 58,
   background: `linear-gradient(160deg, ${vars.color.blue} 0%, ${vars.color.blueDeep} 100%)`,
   color: vars.color.white,
 });
