@@ -1,7 +1,8 @@
 "use client";
 
 import type { Combo } from "@/api/recommend";
-import { AccountChip, AppBar, BottomBar, CTAButton } from "@/components";
+import { AccountChip, AppBar, BottomBar, CTAButton, ShareIcon } from "@/components";
+import { buildShareUrl } from "@/lib/share";
 import {
   formatExpectedBenefit,
   getRecommendResultSnapshot,
@@ -163,15 +164,17 @@ export function ComboDetail({ rank }: { rank: number }) {
   );
   const combo = result?.combos.find((combo) => combo.rank === rank) ?? null;
 
+  // TODO(공유): 카카오톡 공유 SDK 연동 예정. 현재는 Web Share API 폴백.
+  // text는 넘기지 않는다 — 일부 공유 대상이 url 뒤에 text를 이어붙여
+  // 랜딩 URL의 combos 파라미터를 오염시키기 때문. 링크(url)만 공유한다.
   const handleShare = () => {
-    if (combo && typeof navigator !== "undefined" && navigator.share) {
-      navigator
-        .share({
-          title: "내 절세 전략",
-          text: `${combo.products.map((product) => product.product).join(" + ")}: ${combo.short_strategy}`,
-        })
-        .catch(() => {});
-    }
+    if (!combo || typeof navigator === "undefined" || !navigator.share) return;
+    navigator
+      .share({
+        title: "내 절세 전략",
+        url: buildShareUrl(combo),
+      })
+      .catch(() => {});
   };
 
   if (!combo) {
@@ -240,10 +243,15 @@ export function ComboDetail({ rank }: { rank: number }) {
         </Reveal>
       </div>
 
-      <BottomBar tone="app" onShare={handleShare}>
-        <CTAButton variant="blue" onClick={handleShare}>
-          추천 결과 공유하기
-        </CTAButton>
+      <BottomBar tone="app">
+        <button
+          type="button"
+          className={styles.shareButton}
+          onClick={handleShare}
+        >
+          <ShareIcon color="#4E5968" />
+          공유하기
+        </button>
       </BottomBar>
     </div>
   );

@@ -15,6 +15,12 @@ export const topFixed = style({
   zIndex: 10,
   background: vars.color.white,
   boxShadow: `0 1px 0 ${vars.color.line}`,
+  transition: "box-shadow 0.2s ease",
+});
+
+// 스크롤 시작 시 헤더 하단에 그림자.
+export const topFixedScrolled = style({
+  boxShadow: "0 4px 12px rgba(25,31,40,0.08)",
 });
 
 // ── StepProgress ─────────────────────────────
@@ -124,12 +130,16 @@ export const checkCol = style({
   gap: 10,
 });
 
-// ── 하단 내비 ────────────────────────────────
+// ── 하단 내비 (뷰포트 하단 고정) ──────────────
 export const nav = style({
-  position: "sticky",
+  position: "fixed",
   bottom: 0,
+  left: "50%",
+  transform: "translateX(-50%)",
+  width: "100%",
+  maxWidth: vars.layout.maxWidth,
+  zIndex: 10,
   padding: "14px 20px 30px",
-  background: vars.color.white,
 });
 
 export const submitError = style({

@@ -1,12 +1,13 @@
 "use client";
 
-import { AppBar, BottomBar, CTAButton } from "@/components";
+import { AppBar, CTAButton } from "@/components";
 import {
   formatExpectedBenefit,
   getRecommendResultSnapshot,
   getServerRecommendResultSnapshot,
   subscribeRecommendResult,
 } from "@/lib/recommend";
+import { useScrolled } from "@/lib/useScrolled";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
@@ -15,20 +16,12 @@ import * as styles from "./result.css";
 
 export default function ScreenResult() {
   const router = useRouter();
+  const scrolled = useScrolled();
   const result = useSyncExternalStore(
     subscribeRecommendResult,
     getRecommendResultSnapshot,
     getServerRecommendResultSnapshot,
   );
-
-  // TODO(공유): 카카오톡 공유 SDK 연동 예정. 현재는 Web Share API 폴백.
-  const handleShare = () => {
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator
-        .share({ title: "내 절세 전략", text: "내 절세 전략을 확인해 보세요." })
-        .catch(() => {});
-    }
-  };
 
   if (!result) {
     return (
@@ -46,8 +39,12 @@ export default function ScreenResult() {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.hero}>
+      <div
+        className={`${styles.topBar} ${scrolled ? styles.topBarScrolled : ""}`}
+      >
         <AppBar title="추천 결과" accent />
+      </div>
+      <div className={styles.hero}>
         <div className={styles.heroBody}>
           <p className={styles.persona}>{result.profile_summary}</p>
           <p className={styles.lead}>지금 가입하면 최대</p>
@@ -97,10 +94,6 @@ export default function ScreenResult() {
           </motion.div>
         ))}
       </div>
-
-      <BottomBar tone="app" onShare={handleShare}>
-        <CTAButton onClick={handleShare}>내 절세 전략 공유하기</CTAButton>
-      </BottomBar>
     </div>
   );
 }
