@@ -346,3 +346,22 @@ export const disclaimerText = style({
   color: vars.color.ink3,
   lineHeight: 1.45,
 });
+
+/* 하단 공유 버튼 */
+export const shareButton = style({
+  width: "100%",
+  height: 56,
+  borderRadius: vars.radius.button,
+  cursor: "pointer",
+  background: vars.color.white,
+  border: `1px solid ${vars.color.line}`,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+  boxShadow: vars.shadow.card,
+  fontSize: 16,
+  fontWeight: 800,
+  color: vars.color.ink,
+  letterSpacing: "-0.02em",
+});

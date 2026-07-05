@@ -17,8 +17,9 @@ import {
 import { digitsOnly, won } from "@/lib/format";
 import { motion } from "framer-motion";
 import { saveRecommendResult } from "@/lib/recommend";
+import { useScrolled } from "@/lib/useScrolled";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import * as styles from "./page.css";
 
 const STEPS = [
@@ -65,7 +66,7 @@ const INCOME_TYPE_VALUES: Record<
 
 const INVEST_TYPE_VALUES: Record<
   InvestType,
-  RecommendCombosRequest["invest_types"][number]
+  NonNullable<RecommendCombosRequest["invest_types"]>[number]
 > = {
   "국내 상장주식": "domestic_stock",
   "해외주식 (미국 등)": "foreign_stock",
@@ -88,6 +89,7 @@ const RISK_PROFILE_VALUES: Record<
 
 export default function ScreenInput() {
   const router = useRouter();
+  const scrolled = useScrolled();
   const [idx, setIdx] = useState(0);
 
   // 기본 정보
@@ -97,6 +99,7 @@ export default function ScreenInput() {
 
   // 투자 현황
   const [investTypes, setInvestTypes] = useState<InvestType[]>([]);
+  const [noInvest, setNoInvest] = useState(false);
   const [monthlyInvest, setMonthlyInvest] = useState("");
   const [risk, setRisk] = useState<RiskProfile>("안정형");
   const [overseasGain, setOverseasGain] = useState("");
@@ -121,21 +124,20 @@ export default function ScreenInput() {
   const current = STEPS[idx]!;
   const last = idx === STEPS.length - 1;
 
-  // 스텝 전환 시 해당 스텝의 첫 입력란에 포커스 (초기 진입은 제외)
-  const formRef = useRef<HTMLDivElement>(null);
-  const mounted = useRef(false);
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-    formRef.current?.querySelector("input")?.focus();
-  }, [idx]);
-
   const toggleInvestType = (type: InvestType) => {
+    setNoInvest(false);
     setInvestTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
+  };
+
+  // "해당 없음"은 개별 유형과 상호 배타 — 켜면 선택된 유형을 모두 비운다.
+  const toggleNoInvest = () => {
+    setNoInvest((prev) => {
+      const next = !prev;
+      if (next) setInvestTypes([]);
+      return next;
+    });
   };
 
   const submitRecommend = async () => {
@@ -143,7 +145,9 @@ export default function ScreenInput() {
       age: Number(age),
       annual_salary: Number(salary || 0),
       income_type: INCOME_TYPE_VALUES[incomeType],
-      invest_types: investTypes.map((type) => INVEST_TYPE_VALUES[type]),
+      invest_types: noInvest
+        ? null
+        : investTypes.map((type) => INVEST_TYPE_VALUES[type]),
       monthly_invest: Number(monthlyInvest || 0),
       has_isa: hasISA,
       has_pension: hasPension,
@@ -191,7 +195,9 @@ export default function ScreenInput() {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.topFixed}>
+      <div
+        className={`${styles.topFixed} ${scrolled ? styles.topFixedScrolled : ""}`}
+      >
         <AppBar title="내 절세 전략 찾기" showBack={idx > 0} onBack={goPrev} />
         <div className={styles.progress}>
           <div className={styles.progressBars}>
@@ -220,7 +226,7 @@ export default function ScreenInput() {
         <h1 className={styles.title}>{current.title}</h1>
       </div>
 
-      <div className={styles.formCard} ref={formRef}>
+      <div className={styles.formCard}>
         {idx === 0 && (
           <div className={styles.stepCol}>
             <FieldRow label="나이">
@@ -269,6 +275,12 @@ export default function ScreenInput() {
                     onClick={() => toggleInvestType(type)}
                   />
                 ))}
+                <Tile
+                  label="해당 없음 (투자 중인 종목이 없어요)"
+                  on={noInvest}
+                  onClick={toggleNoInvest}
+                  full
+                />
               </div>
             </FieldRow>
             <FieldRow label="월 투자 가능액">

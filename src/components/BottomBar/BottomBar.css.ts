@@ -2,8 +2,13 @@ import { style, styleVariants } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
 
 const barBase = style({
-  position: "sticky",
+  position: "fixed",
   bottom: 0,
+  left: "50%",
+  transform: "translateX(-50%)",
+  width: "100%",
+  maxWidth: vars.layout.maxWidth,
+  zIndex: 10,
   padding: "14px 20px 30px",
   display: "flex",
   gap: 10,
