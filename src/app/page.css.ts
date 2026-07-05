@@ -8,19 +8,9 @@ export const screen = style({
   flexDirection: "column",
 });
 
-// 상단 고정 영역(AppBar + 진행바) — 흰 배경, sticky.
-export const topFixed = style({
-  position: "sticky",
-  top: 0,
-  zIndex: 10,
-  background: vars.color.white,
-  boxShadow: `0 1px 0 ${vars.color.line}`,
-  transition: "box-shadow 0.2s ease",
-});
-
-// 스크롤 시작 시 헤더 하단에 그림자.
-export const topFixedScrolled = style({
-  boxShadow: "0 4px 12px rgba(25,31,40,0.08)",
+// 고정 헤더 높이만큼 자리를 비우는 spacer — flex column에서 눌리지 않도록 shrink 방지.
+export const topSpacer = style({
+  flexShrink: 0,
 });
 
 // ── StepProgress ─────────────────────────────
@@ -74,7 +64,7 @@ export const progressCurrent = style({
 
 // ── StepHeader ───────────────────────────────
 export const header = style({
-  padding: "14px 20px 22px",
+  padding: "20px 22px",
 });
 
 export const title = style({

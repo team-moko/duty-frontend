@@ -1,8 +1,5 @@
-"use client";
-
-import { AccountChip, AppBar, CTAButton } from "@/components";
+import { AccountChip, CTAButton } from "@/components";
 import { getTaxType } from "@/lib/taxType";
-import { useRouter } from "next/navigation";
 import * as styles from "./share.css";
 
 const SHARE_BENEFITS = [
@@ -30,7 +27,6 @@ interface ScreenShareProps {
 }
 
 export function ScreenShare({ rate, combos, strategy }: ScreenShareProps) {
-  const router = useRouter();
   const type = getTaxType(rate);
 
   return (
@@ -121,7 +117,7 @@ export function ScreenShare({ rate, combos, strategy }: ScreenShareProps) {
 
       {/* 고정 CTA — 유입 진입점 */}
       <div className={styles.ctaBar}>
-        <CTAButton sub="30초면 충분해요" onClick={() => router.push("/")}>
+        <CTAButton sub="30초면 충분해요" href="/">
           내 절세 전략 보러가기
         </CTAButton>
       </div>

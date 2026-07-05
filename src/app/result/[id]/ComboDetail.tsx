@@ -1,7 +1,14 @@
 "use client";
 
 import type { Combo } from "@/api/recommend";
-import { AccountChip, AppBar, BottomBar, CTAButton, ShareIcon } from "@/components";
+import {
+  AccountChip,
+  AppBar,
+  BottomBar,
+  CTAButton,
+  FixedTopBar,
+  ShareIcon,
+} from "@/components";
 import { buildShareUrl } from "@/lib/share";
 import {
   formatExpectedBenefit,
@@ -193,8 +200,10 @@ export function ComboDetail({ rank }: { rank: number }) {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.hero}>
+      <FixedTopBar variant="accent">
         <AppBar accent />
+      </FixedTopBar>
+      <div className={styles.hero}>
         <div className={styles.heroBody}>
           <span className={styles.rankPill}>
             {combo.rank}위{combo.label ? ` · ${combo.label}` : ""}

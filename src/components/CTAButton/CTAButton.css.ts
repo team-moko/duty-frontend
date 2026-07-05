@@ -7,6 +7,7 @@ const base = style({
   cursor: "pointer",
   borderRadius: vars.radius.button,
   color: vars.color.white,
+  textDecoration: "none",
   fontSize: 17,
   fontWeight: 700,
   letterSpacing: "-0.02em",

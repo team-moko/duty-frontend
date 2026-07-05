@@ -11,7 +11,7 @@ export interface RecommendCombosRequest {
     | "deposit"
     | "bond"
     | "reit"
-  > | null;
+  >;
   monthly_invest: number;
   has_isa: boolean;
   has_pension: boolean;

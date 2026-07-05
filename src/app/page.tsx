@@ -10,6 +10,7 @@ import {
   CheckRow,
   CTAButton,
   FieldRow,
+  FixedTopBar,
   InputBox,
   Segmented,
   Tile,
@@ -17,9 +18,8 @@ import {
 import { digitsOnly, won } from "@/lib/format";
 import { motion } from "framer-motion";
 import { saveRecommendResult } from "@/lib/recommend";
-import { useScrolled } from "@/lib/useScrolled";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as styles from "./page.css";
 
 const STEPS = [
@@ -66,7 +66,7 @@ const INCOME_TYPE_VALUES: Record<
 
 const INVEST_TYPE_VALUES: Record<
   InvestType,
-  NonNullable<RecommendCombosRequest["invest_types"]>[number]
+  RecommendCombosRequest["invest_types"][number]
 > = {
   "국내 상장주식": "domestic_stock",
   "해외주식 (미국 등)": "foreign_stock",
@@ -89,8 +89,19 @@ const RISK_PROFILE_VALUES: Record<
 
 export default function ScreenInput() {
   const router = useRouter();
-  const scrolled = useScrolled();
   const [idx, setIdx] = useState(0);
+
+  // 고정 헤더가 흐름에서 빠지므로 그 높이만큼 하단 콘텐츠에 여백을 확보한다.
+  const topFixedRef = useRef<HTMLDivElement>(null);
+  const [topFixedH, setTopFixedH] = useState(0);
+  useEffect(() => {
+    const el = topFixedRef.current;
+    if (!el) return;
+    setTopFixedH(el.offsetHeight);
+    const observer = new ResizeObserver(() => setTopFixedH(el.offsetHeight));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // 기본 정보
   const [age, setAge] = useState("");
@@ -146,7 +157,7 @@ export default function ScreenInput() {
       annual_salary: Number(salary || 0),
       income_type: INCOME_TYPE_VALUES[incomeType],
       invest_types: noInvest
-        ? null
+        ? []
         : investTypes.map((type) => INVEST_TYPE_VALUES[type]),
       monthly_invest: Number(monthlyInvest || 0),
       has_isa: hasISA,
@@ -195,9 +206,7 @@ export default function ScreenInput() {
 
   return (
     <div className={styles.screen}>
-      <div
-        className={`${styles.topFixed} ${scrolled ? styles.topFixedScrolled : ""}`}
-      >
+      <FixedTopBar variant="solid" ref={topFixedRef}>
         <AppBar title="내 절세 전략 찾기" showBack={idx > 0} onBack={goPrev} />
         <div className={styles.progress}>
           <div className={styles.progressBars}>
@@ -220,7 +229,13 @@ export default function ScreenInput() {
             </span>
           </div>
         </div>
-      </div>
+      </FixedTopBar>
+
+      <div
+        className={styles.topSpacer}
+        style={{ height: topFixedH }}
+        aria-hidden
+      />
 
       <div className={styles.header}>
         <h1 className={styles.title}>{current.title}</h1>
@@ -229,7 +244,7 @@ export default function ScreenInput() {
       <div className={styles.formCard}>
         {idx === 0 && (
           <div className={styles.stepCol}>
-            <FieldRow label="나이">
+            <FieldRow label="나이" required>
               <InputBox
                 value={age}
                 onChange={(v) => setAge(digitsOnly(v).slice(0, 3))}
@@ -239,7 +254,7 @@ export default function ScreenInput() {
                 inputMode="numeric"
               />
             </FieldRow>
-            <FieldRow label="연봉" hint="세전 총급여 기준">
+            <FieldRow label="연봉" hint="세전 총급여 기준" required>
               <InputBox
                 value={salary === "" ? "" : won(salary)}
                 onChange={(v) => setSalary(digitsOnly(v))}
@@ -250,7 +265,7 @@ export default function ScreenInput() {
                 inputMode="numeric"
               />
             </FieldRow>
-            <FieldRow label="소득 유형">
+            <FieldRow label="소득 유형" required>
               <Segmented
                 options={INCOME_TYPES}
                 value={incomeType}
@@ -265,6 +280,7 @@ export default function ScreenInput() {
             <FieldRow
               label="보유 투자 유형"
               hint="해당하는 항목을 모두 선택하세요"
+              required
             >
               <div className={styles.investGrid}>
                 {INVEST_TYPES.map((type) => (
@@ -283,7 +299,7 @@ export default function ScreenInput() {
                 />
               </div>
             </FieldRow>
-            <FieldRow label="월 투자 가능액">
+            <FieldRow label="월 투자 가능액" required>
               <InputBox
                 value={monthlyInvest === "" ? "" : won(monthlyInvest)}
                 onChange={(v) => setMonthlyInvest(digitsOnly(v))}
@@ -293,7 +309,7 @@ export default function ScreenInput() {
                 inputMode="numeric"
               />
             </FieldRow>
-            <FieldRow label="투자 성향">
+            <FieldRow label="투자 성향" required>
               <Segmented
                 options={RISK_PROFILES}
                 value={risk}

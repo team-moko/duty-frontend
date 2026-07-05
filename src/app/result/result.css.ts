@@ -23,24 +23,6 @@ export const empty = style({
   gap: 18,
 });
 
-// 상단 고정 바 — hero 위에 얹히는 투명 바, 스크롤 시 파랑 + 그림자.
-export const topBar = style({
-  position: "fixed",
-  top: 0,
-  left: "50%",
-  transform: "translateX(-50%)",
-  width: "100%",
-  maxWidth: vars.layout.maxWidth,
-  zIndex: 20,
-  background: "transparent",
-  transition: "background 0.2s ease, box-shadow 0.2s ease",
-});
-
-export const topBarScrolled = style({
-  background: vars.color.blue,
-  boxShadow: "0 4px 12px rgba(25,31,40,0.12)",
-});
-
 export const hero = style({
   // 고정 AppBar(약 58px) 높이만큼 상단 여백 확보.
   paddingTop: 58,

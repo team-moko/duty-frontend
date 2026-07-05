@@ -12,4 +12,5 @@ export { Segmented } from "./Segmented/Segmented";
 export { Tile } from "./Tile/Tile";
 export { AccountToggle } from "./AccountToggle/AccountToggle";
 export { BottomBar } from "./BottomBar/BottomBar";
+export { FixedTopBar } from "./FixedTopBar/FixedTopBar";
 export { ChevronLeftIcon, ChevronRightIcon, CheckIcon, ShareIcon } from "./icons";

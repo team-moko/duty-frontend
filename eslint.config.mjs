@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 디자인 핸드오프 참조 번들 — 전역 window 등록 방식 데모 코드라 lint 대상 아님.
+    "docs/**",
   ]),
 ]);
 

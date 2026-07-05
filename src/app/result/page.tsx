@@ -1,22 +1,21 @@
 "use client";
 
-import { AppBar, CTAButton } from "@/components";
+import { AppBar, CTAButton, FixedTopBar } from "@/components";
 import {
   formatExpectedBenefit,
   getRecommendResultSnapshot,
   getServerRecommendResultSnapshot,
   subscribeRecommendResult,
 } from "@/lib/recommend";
-import { useScrolled } from "@/lib/useScrolled";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { ComboCard } from "./ComboCard";
+import { ScreenResultEmpty } from "./ScreenResultEmpty";
 import * as styles from "./result.css";
 
 export default function ScreenResult() {
   const router = useRouter();
-  const scrolled = useScrolled();
   const result = useSyncExternalStore(
     subscribeRecommendResult,
     getRecommendResultSnapshot,
@@ -37,13 +36,16 @@ export default function ScreenResult() {
     );
   }
 
+  // 환급률이 null이면 계산 실패 — 확인이 필요한 항목 안내 화면으로 대체.
+  if (result.header.max_refund_rate_percent === null) {
+    return <ScreenResultEmpty />;
+  }
+
   return (
     <div className={styles.screen}>
-      <div
-        className={`${styles.topBar} ${scrolled ? styles.topBarScrolled : ""}`}
-      >
+      <FixedTopBar variant="accent">
         <AppBar title="추천 결과" accent />
-      </div>
+      </FixedTopBar>
       <div className={styles.hero}>
         <div className={styles.heroBody}>
           <p className={styles.persona}>{result.profile_summary}</p>
