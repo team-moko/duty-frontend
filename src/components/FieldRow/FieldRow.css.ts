@@ -20,6 +20,12 @@ export const label = style({
   letterSpacing: "-0.02em",
 });
 
+export const required = style({
+  marginLeft: 2,
+  color: "#f04452",
+  fontWeight: 700,
+});
+
 export const hint = style({
   fontSize: 12.5,
   fontWeight: 500,

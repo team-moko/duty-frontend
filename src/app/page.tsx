@@ -229,7 +229,7 @@ export default function ScreenInput() {
       <div className={styles.formCard}>
         {idx === 0 && (
           <div className={styles.stepCol}>
-            <FieldRow label="나이">
+            <FieldRow label="나이" required>
               <InputBox
                 value={age}
                 onChange={(v) => setAge(digitsOnly(v).slice(0, 3))}
@@ -239,7 +239,7 @@ export default function ScreenInput() {
                 inputMode="numeric"
               />
             </FieldRow>
-            <FieldRow label="연봉" hint="세전 총급여 기준">
+            <FieldRow label="연봉" hint="세전 총급여 기준" required>
               <InputBox
                 value={salary === "" ? "" : won(salary)}
                 onChange={(v) => setSalary(digitsOnly(v))}
@@ -250,7 +250,7 @@ export default function ScreenInput() {
                 inputMode="numeric"
               />
             </FieldRow>
-            <FieldRow label="소득 유형">
+            <FieldRow label="소득 유형" required>
               <Segmented
                 options={INCOME_TYPES}
                 value={incomeType}
@@ -265,6 +265,7 @@ export default function ScreenInput() {
             <FieldRow
               label="보유 투자 유형"
               hint="해당하는 항목을 모두 선택하세요"
+              required
             >
               <div className={styles.investGrid}>
                 {INVEST_TYPES.map((type) => (
@@ -283,7 +284,7 @@ export default function ScreenInput() {
                 />
               </div>
             </FieldRow>
-            <FieldRow label="월 투자 가능액">
+            <FieldRow label="월 투자 가능액" required>
               <InputBox
                 value={monthlyInvest === "" ? "" : won(monthlyInvest)}
                 onChange={(v) => setMonthlyInvest(digitsOnly(v))}
@@ -293,7 +294,7 @@ export default function ScreenInput() {
                 inputMode="numeric"
               />
             </FieldRow>
-            <FieldRow label="투자 성향">
+            <FieldRow label="투자 성향" required>
               <Segmented
                 options={RISK_PROFILES}
                 value={risk}
