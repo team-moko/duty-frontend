@@ -66,7 +66,7 @@ const INCOME_TYPE_VALUES: Record<
 
 const INVEST_TYPE_VALUES: Record<
   InvestType,
-  NonNullable<RecommendCombosRequest["invest_types"]>[number]
+  RecommendCombosRequest["invest_types"][number]
 > = {
   "국내 상장주식": "domestic_stock",
   "해외주식 (미국 등)": "foreign_stock",
@@ -146,7 +146,7 @@ export default function ScreenInput() {
       annual_salary: Number(salary || 0),
       income_type: INCOME_TYPE_VALUES[incomeType],
       invest_types: noInvest
-        ? null
+        ? []
         : investTypes.map((type) => INVEST_TYPE_VALUES[type]),
       monthly_invest: Number(monthlyInvest || 0),
       has_isa: hasISA,
