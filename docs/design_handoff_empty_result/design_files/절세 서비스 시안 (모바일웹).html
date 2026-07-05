@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>절세 서비스 — 모바일웹 시안</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="theme.jsx"></script>
+<script type="text/babel" src="screen-input.jsx"></script>
+<script type="text/babel" src="screen-result.jsx"></script>
+<script type="text/babel" src="screen-detail.jsx"></script>
+<script type="text/babel" src="screen-share.jsx"></script>
+<script type="text/babel" src="screen-input2.jsx"></script>
+<script type="text/babel" src="screen-input-stepped.jsx"></script>
+
+<script type="text/babel">
+const W = 390;
+
+// Mobile browser chrome (Chrome-style top omnibox). Signals "mobile web", not native app.
+function WebFrame({ children, h, url = 'jeolse.kr', path = '' }) {
+  return (
+    <div style={{
+      width: W, height: h, background: '#fff', borderRadius: 30, overflow: 'hidden',
+      position: 'relative', display: 'flex', flexDirection: 'column',
+      boxShadow: '0 30px 70px rgba(25,31,40,0.16), 0 0 0 1px rgba(25,31,40,0.06)',
+    }}>
+      {/* browser top bar */}
+      <div style={{
+        flexShrink: 0, background: '#ECEEF1', borderBottom: '1px solid #DDE1E6',
+        padding: '10px 12px 11px', display: 'flex', alignItems: 'center', gap: 9,
+      }}>
+        <div style={{
+          flex: 1, height: 38, background: '#fff', borderRadius: 19,
+          display: 'flex', alignItems: 'center', gap: 7, padding: '0 14px',
+          boxShadow: 'inset 0 0 0 1px rgba(25,31,40,0.05)',
+        }}>
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+            <rect x="1.5" y="6" width="9" height="7" rx="1.6" fill="#8B95A1"/>
+            <path d="M3.4 6V4.2a2.6 2.6 0 015.2 0V6" stroke="#8B95A1" strokeWidth="1.4" fill="none"/>
+          </svg>
+          <span style={{ fontFamily: 'Pretendard', fontSize: 14.5, fontWeight: 600, color: '#4E5968', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {url}<span style={{ color: '#B0B8C1' }}>{path}</span>
+          </span>
+          <div style={{ flex: 1 }}></div>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+            <path d="M13 8a5 5 0 11-1.5-3.6M13 1.5V5h-3.5" stroke="#8B95A1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div style={{ width: 30, height: 30, borderRadius: 7, border: '2px solid #8B95A1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontFamily: 'Pretendard', fontSize: 12, fontWeight: 800, color: '#8B95A1' }}>3</span>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 20 20" style={{ flexShrink: 0 }}>
+          <circle cx="10" cy="4" r="1.7" fill="#8B95A1"/><circle cx="10" cy="10" r="1.7" fill="#8B95A1"/><circle cx="10" cy="16" r="1.7" fill="#8B95A1"/>
+        </svg>
+      </div>
+      {/* page content */}
+      <div style={{ flex: 1, overflow: 'auto', position: 'relative' }}>{children}</div>
+    </div>
+  );
+}
+
+const noChrome = { background: 'transparent', boxShadow: 'none' };
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="flow" title="절세 서비스 — 모바일웹" subtitle="모바일 브라우저 기준 · 홈(STEP1) 뒤로가기 제거 · v1">
+        <DCArtboard id="w1" label="STEP 1 · 정보 입력 (홈)" width={W} height={1460} style={noChrome}>
+          <WebFrame h={1460} path="/"><ScreenInput web={true} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="w2" label="STEP 2 · 추천 결과" width={W} height={1665} style={noChrome}>
+          <WebFrame h={1665} path="/result"><ScreenResult web={true} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="w2e" label="STEP 2 · 결과 없음 (환급률 null)" width={W} height={1000} style={noChrome}>
+          <WebFrame h={1000} path="/result"><ScreenResultEmpty web={true} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="w3" label="조합 상세 (1위 클릭 시)" width={W} height={1500} style={noChrome}>
+          <WebFrame h={1500} path="/result/1"><ScreenDetail web={true} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="w4" label="공유 링크 랜딩 (수신자 화면)" width={W} height={1640} style={noChrome}>
+          <WebFrame h={1640} url="jeolse.kr" path="/s/지훈"><ScreenShare web={true} /></WebFrame>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="types" title="절세 유형 — 4개 버전" subtitle="예상 환급률(%) 구간별 유형 · 낮을수록 '고수', 높을수록 '기회'로 긍정 프레이밍">
+        <DCArtboard id="ty1" label="≥15% · 환급 떡상 잠재력형" width={340} height={420} style={noChrome}>
+          <div style={{ padding: 16 }}><ShareTypeCard rate={16.5} /></div>
+        </DCArtboard>
+        <DCArtboard id="ty2" label="13–15% · 빈틈없는 균형형" width={340} height={420} style={noChrome}>
+          <div style={{ padding: 16 }}><ShareTypeCard rate={14.2} /></div>
+        </DCArtboard>
+        <DCArtboard id="ty3" label="11–13% · 알뜰 실속형" width={340} height={420} style={noChrome}>
+          <div style={{ padding: 16 }}><ShareTypeCard rate={11.3} /></div>
+        </DCArtboard>
+        <DCArtboard id="ty4" label="<11% · 이미 절세 고수형" width={340} height={420} style={noChrome}>
+          <div style={{ padding: 16 }}><ShareTypeCard rate={9.4} /></div>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="flow-v2" title="절세 서비스 — STEP 1 개선안 (확장된 입력 항목)" subtitle="타일형 다중선택 · 세그먼트 컨트롤 · 조건부 인라인 노출 · 섹션 카드">
+        <DCArtboard id="v2" label="STEP 1 · 정보 입력 (개선안)" width={W} height={2590} style={noChrome}>
+          <WebFrame h={2590} path="/"><WebInput2 /></WebFrame>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="flow-stepped" title="절세 서비스 — STEP 1 스탑형 (4단계 분할)" subtitle="진행바 + 한 번에 한 섹션 · 다음/이전 내비게이션">
+        <DCArtboard id="st1" label="스탑 1 · 기본 정보" width={W} height={852} style={noChrome}>
+          <WebFrame h={852} path="/step/1"><StepScreen idx={0} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="st2" label="스탑 2 · 투자 현황" width={W} height={1210} style={noChrome}>
+          <WebFrame h={1210} path="/step/2"><StepScreen idx={1} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="st3" label="스탑 3 · 절세 계좌" width={W} height={906} style={noChrome}>
+          <WebFrame h={906} path="/step/3"><StepScreen idx={2} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="st4" label="스탑 4 · 소득·가족" width={W} height={1020} style={noChrome}>
+          <WebFrame h={1020} path="/step/4"><StepScreen idx={3} /></WebFrame>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
