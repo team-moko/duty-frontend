@@ -12,7 +12,7 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://jeolse.kr"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://duty-frontend-one.vercel.app"
   ),
   title: "내 절세 전략 찾기",
   description: "연봉·자산·가족 정보로 가장 유리한 절세 계좌 조합을 추천해 드려요.",
