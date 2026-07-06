@@ -70,6 +70,24 @@ export const heroPct = style({
   fontWeight: 800,
 });
 
+export const heroAmount = style({
+  fontSize: 36,
+  fontWeight: 800,
+  letterSpacing: "-0.04em",
+  lineHeight: 1.15,
+  display: "block",
+});
+
+export const heroNoContribBadge = style({
+  display: "inline-block",
+  background: "rgba(255,255,255,0.16)",
+  color: vars.color.white,
+  borderRadius: vars.radius.pill,
+  padding: "6px 12px",
+  fontSize: 12.5,
+  fontWeight: 700,
+});
+
 export const heroRefundCol = style({
   textAlign: "right",
   paddingBottom: 6,

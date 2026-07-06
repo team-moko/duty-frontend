@@ -67,6 +67,7 @@ export interface Combo {
   label: string | null;
   products: ComboProduct[];
   refund_rate_percent: number | null;
+  refund_rate_note: string | null;
   expected_annual_refund_krw: number;
   recommended_contribution_krw: number;
   short_strategy: string;
@@ -79,6 +80,7 @@ export interface ComboResponse {
   combos: Combo[];
   header: {
     max_refund_rate_percent: number | null;
+    max_refund_rate_note: string | null;
     max_annual_refund_krw: number;
     applicable_combo_count: number;
   };

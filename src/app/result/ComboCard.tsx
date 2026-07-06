@@ -39,25 +39,45 @@ export function ComboCard({ combo, onClick }: ComboCardProps) {
       </div>
 
       <div className={styles.metricRow}>
-        <div className={styles.metricLeft}>
-          <span className={styles.metricLabel}>예상 환급률</span>
-          <div className={styles.rateWrap}>
-            <span className={`${styles.rateBaseClass} ${styles.rate[variant]}`}>
-              {combo.refund_rate_percent ?? "-"}
-            </span>
-            {combo.refund_rate_percent !== null && (
-              <span className={`${styles.pctBaseClass} ${styles.pct[variant]}`}>
-                %
+        {combo.refund_rate_percent === null ? (
+          <>
+            <div className={styles.metricLeft}>
+              <span className={styles.metricLabel}>예상 절세액</span>
+              <span
+                className={`${styles.amountBaseClass} ${styles.amount[variant]}`}
+              >
+                {formatExpectedBenefit(combo.expected_annual_refund_krw)}
               </span>
-            )}
-          </div>
-        </div>
-        <div className={styles.metricRight}>
-          <span className={styles.refundLabel}>연 환급 예상</span>
-          <span className={styles.refundValue}>
-            {formatExpectedBenefit(combo.expected_annual_refund_krw)}
-          </span>
-        </div>
+            </div>
+            <div className={styles.metricRight}>
+              <span className={styles.noContribBadge}>납입 없음</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={styles.metricLeft}>
+              <span className={styles.metricLabel}>예상 환급률</span>
+              <div className={styles.rateWrap}>
+                <span
+                  className={`${styles.rateBaseClass} ${styles.rate[variant]}`}
+                >
+                  {combo.refund_rate_percent}
+                </span>
+                <span
+                  className={`${styles.pctBaseClass} ${styles.pct[variant]}`}
+                >
+                  %
+                </span>
+              </div>
+            </div>
+            <div className={styles.metricRight}>
+              <span className={styles.refundLabel}>연 환급 예상</span>
+              <span className={styles.refundValue}>
+                {formatExpectedBenefit(combo.expected_annual_refund_krw)}
+              </span>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={`${styles.reasonBaseClass} ${styles.reason[variant]}`}>

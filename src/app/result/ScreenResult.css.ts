@@ -69,6 +69,13 @@ export const bigPct = style({
   fontWeight: 800,
 });
 
+export const bigAmount = style({
+  fontSize: 46,
+  fontWeight: 800,
+  letterSpacing: "-0.04em",
+  lineHeight: 1.15,
+});
+
 export const heroSub = style({
   margin: "8px 0 0",
   fontSize: 18,

@@ -120,6 +120,30 @@ export const pct = styleVariants({
 
 export const pctBaseClass = pctBase;
 
+const amountBase = style({
+  fontSize: 26,
+  fontWeight: 800,
+  letterSpacing: "-0.03em",
+  lineHeight: 1.2,
+});
+
+export const amount = styleVariants({
+  top: { color: vars.color.blue },
+  normal: { color: vars.color.ink },
+});
+
+export const amountBaseClass = amountBase;
+
+export const noContribBadge = style({
+  display: "inline-block",
+  background: vars.color.fieldBg,
+  color: vars.color.ink2,
+  borderRadius: vars.radius.chip,
+  padding: "5px 10px",
+  fontSize: 12,
+  fontWeight: 700,
+});
+
 export const metricRight = style({
   textAlign: "right",
 });
