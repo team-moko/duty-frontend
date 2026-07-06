@@ -1,37 +1,59 @@
+import type { Metadata } from "next";
 import { ScreenShare } from "./ScreenShare";
+import { normalizeShareParams } from "./shareParams";
 
-const DEFAULT_COMBOS = ["연금저축", "IRP", "청년형 ISA"];
-const DEFAULT_RATE = 16.5;
-const DEFAULT_STRATEGY =
-  "세액공제 16.5% 구간 + 청년 비과세 혜택까지 모두 챙기는 조합이에요";
+type SharePageProps = {
+  searchParams: Promise<{ rate?: string; combos?: string; strategy?: string }>;
+};
 
 // 공유 링크 랜딩: jeolse.kr/s
 // 개인정보(이름·금액·나이·연봉)는 받지 않고, 예상 환급률(%)·계좌 조합·전략 문구만 파라미터로 렌더한다.
-export default async function SharePage({
+export default async function SharePage({ searchParams }: SharePageProps) {
+  const { rate, combos, strategy } = normalizeShareParams(await searchParams);
+
+  return <ScreenShare rate={rate} combos={combos} strategy={strategy} />;
+}
+
+// SNS 공유용 메타데이터 — 쿼리에 담긴 환급률·전략에 맞춰 동적으로 생성한다.
+export async function generateMetadata({
   searchParams,
-}: {
-  searchParams: Promise<{ rate?: string; combos?: string; strategy?: string }>;
-}) {
-  const { rate, combos, strategy } = await searchParams;
+}: SharePageProps): Promise<Metadata> {
+  const { rate, combos, strategy } = normalizeShareParams(await searchParams);
 
-  const parsedRate = Number(rate);
-  const safeRate =
-    Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : DEFAULT_RATE;
+  const title = `계좌 조합만 잘 짜도 환급률 ${rate}%`;
+  const description = `${strategy} 내 조건으로 30초 만에 확인해보세요.`;
 
-  const parsedCombos = combos
-    ? combos
-        .split(",")
-        .map((combo) => combo.trim())
-        .filter(Boolean)
-    : DEFAULT_COMBOS;
+  // OG 이미지 라우트 URL — 한글 파라미터가 안전하게 인코딩되도록 URLSearchParams로 조립한다.
+  const ogParams = new URLSearchParams({
+    rate: String(rate),
+    combos: combos.join(","),
+  });
+  const ogImageUrl = `/s/og?${ogParams.toString()}`;
 
-  const safeStrategy = strategy?.trim() || DEFAULT_STRATEGY;
-
-  return (
-    <ScreenShare
-      rate={safeRate}
-      combos={parsedCombos.length > 0 ? parsedCombos : DEFAULT_COMBOS}
-      strategy={safeStrategy}
-    />
-  );
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "/s",
+      siteName: "내 절세 전략 찾기",
+      locale: "ko_KR",
+      type: "website",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
+    },
+  };
 }
