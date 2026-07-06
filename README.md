@@ -104,7 +104,7 @@ pnpm install
 
 # 2. 환경변수 설정
 cp .env.example .env.local
-# .env.local의 API_BASE_URL을 실제 백엔드 주소로 변경
+# .env.local의 NEXT_PUBLIC_API_BASE_URL을 실제 백엔드 주소로 변경
 
 # 3. 개발 서버 (http://localhost:3000)
 pnpm dev
