@@ -1,5 +1,5 @@
 import { AccountChip, CTAButton } from "@/components";
-import { getTaxType } from "@/lib/taxType";
+import { getTaxType, NO_CONTRIBUTION_TAX_TYPE } from "@/lib/taxType";
 import * as styles from "./share.css";
 
 const SHARE_BENEFITS = [
@@ -21,13 +21,13 @@ const SHARE_BENEFITS = [
 ];
 
 interface ScreenShareProps {
-  rate: number;
+  rate: number | null;
   combos: string[];
   strategy: string;
 }
 
 export function ScreenShare({ rate, combos, strategy }: ScreenShareProps) {
-  const type = getTaxType(rate);
+  const type = rate === null ? NO_CONTRIBUTION_TAX_TYPE : getTaxType(rate);
 
   return (
     <div className={styles.screen}>
@@ -57,13 +57,30 @@ export function ScreenShare({ rate, combos, strategy }: ScreenShareProps) {
 
           {/* 중단 — 지표 */}
           <div className={styles.metricSection}>
-            <p className={styles.metricLead}>계좌를 잘 조합하면</p>
-            <div className={styles.rateWrap}>
-              <span className={styles.rate}>{rate}</span>
-              <span className={styles.ratePct}>%</span>
-            </div>
-            <p className={styles.metricTail}>까지 돌려받을 수 있어요</p>
-            <p className={styles.metricCaption}>납입액 대비 예상 환급률 기준</p>
+            {rate === null ? (
+              <>
+                <p className={styles.metricLead}>따로 납입하지 않아도</p>
+                <div className={styles.rateWrap}>
+                  <span className={styles.rate}>절세</span>
+                </div>
+                <p className={styles.metricTail}>효과를 볼 수 있어요</p>
+                <p className={styles.metricCaption}>
+                  손익통산·분산매도 등 납입 없는 전략 기준
+                </p>
+              </>
+            ) : (
+              <>
+                <p className={styles.metricLead}>계좌를 잘 조합하면</p>
+                <div className={styles.rateWrap}>
+                  <span className={styles.rate}>{rate}</span>
+                  <span className={styles.ratePct}>%</span>
+                </div>
+                <p className={styles.metricTail}>까지 돌려받을 수 있어요</p>
+                <p className={styles.metricCaption}>
+                  납입액 대비 예상 환급률 기준
+                </p>
+              </>
+            )}
           </div>
 
           {/* 하단 — 조합 */}

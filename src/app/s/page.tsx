@@ -3,7 +3,12 @@ import { ScreenShare } from "./ScreenShare";
 import { normalizeShareParams } from "./shareParams";
 
 type SharePageProps = {
-  searchParams: Promise<{ rate?: string; combos?: string; strategy?: string }>;
+  searchParams: Promise<{
+    rate?: string;
+    combos?: string;
+    strategy?: string;
+    norate?: string;
+  }>;
 };
 
 // 공유 링크 랜딩: jeolse.kr/s
@@ -20,14 +25,19 @@ export async function generateMetadata({
 }: SharePageProps): Promise<Metadata> {
   const { rate, combos, strategy } = normalizeShareParams(await searchParams);
 
-  const title = `계좌 조합만 잘 짜도 환급률 ${rate}%`;
+  const title =
+    rate === null
+      ? "납입 없이도 세금이 줄어드는 절세 전략"
+      : `계좌 조합만 잘 짜도 환급률 ${rate}%`;
   const description = `${strategy} 내 조건으로 30초 만에 확인해보세요.`;
 
   // OG 이미지 라우트 URL — 한글 파라미터가 안전하게 인코딩되도록 URLSearchParams로 조립한다.
-  const ogParams = new URLSearchParams({
-    rate: String(rate),
-    combos: combos.join(","),
-  });
+  const ogParams = new URLSearchParams({ combos: combos.join(",") });
+  if (rate === null) {
+    ogParams.set("norate", "1");
+  } else {
+    ogParams.set("rate", String(rate));
+  }
   const ogImageUrl = `/s/og?${ogParams.toString()}`;
 
   return {
