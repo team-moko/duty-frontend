@@ -97,32 +97,3 @@ export function isComboResponse(value: unknown): value is ComboResponse {
   );
 }
 
-export async function postRecommendCombos(
-  body: RecommendCombosRequest,
-): Promise<ComboResponse> {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL 환경변수가 설정되지 않았습니다.");
-  }
-
-  const response = await fetch(
-    `${apiBaseUrl.replace(/\/$/, "")}/recommend/combos`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
-  const data: unknown = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      "추천 결과를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
-    );
-  }
-  if (!isComboResponse(data)) {
-    throw new Error("추천 결과 형식이 올바르지 않습니다.");
-  }
-
-  return data;
-}

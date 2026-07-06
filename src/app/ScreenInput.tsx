@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  postRecommendCombos,
-  type RecommendCombosRequest,
-} from "@/api/recommend";
+import { type RecommendCombosRequest } from "@/api/recommend";
+import { postRecommendCombos } from "@/api/recommend.actions";
 import {
   AccountToggle,
   AppBar,
