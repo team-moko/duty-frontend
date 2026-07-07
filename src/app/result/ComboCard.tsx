@@ -1,23 +1,22 @@
 import type { Combo } from "@/api/recommend";
-import { AccountChip, ChevronRightIcon, RankBadge } from "@/components";
+import { AccountChip } from "@/components/AccountChip/AccountChip";
+import { ChevronRightIcon } from "@/components/icons";
+import { RankBadge } from "@/components/RankBadge/RankBadge";
 import { formatExpectedBenefit } from "@/lib/recommend";
+import Link from "next/link";
 import * as styles from "./ComboCard.css";
 
 interface ComboCardProps {
   combo: Combo;
-  onClick?: () => void;
+  href: string;
 }
 
-export function ComboCard({ combo, onClick }: ComboCardProps) {
+export function ComboCard({ combo, href }: ComboCardProps) {
   const top = combo.rank === 1;
   const variant = top ? "top" : "normal";
 
   return (
-    <button
-      type="button"
-      className={`${styles.card[variant]}`}
-      onClick={onClick}
-    >
+    <Link href={href} className={`${styles.card[variant]}`}>
       {top && (
         <span className={styles.bestBadge}>{combo.label ?? "BEST 추천"}</span>
       )}
@@ -90,6 +89,6 @@ export function ComboCard({ combo, onClick }: ComboCardProps) {
         <span className={styles.reasonEmoji}>💡</span>
         <span className={styles.reasonText}>{combo.short_strategy}</span>
       </div>
-    </button>
+    </Link>
   );
 }

@@ -1,5 +1,5 @@
-import { style, styleVariants } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
+import { style, styleVariants } from "@vanilla-extract/css";
 
 const cardBase = style({
   background: vars.color.white,
@@ -13,6 +13,8 @@ const cardBase = style({
   border: "1px solid",
   width: "100%",
   textAlign: "left",
+  textDecoration: "none",
+  color: "inherit",
   transition: "transform 0.08s ease",
   selectors: {
     "&:active": { transform: "scale(0.995)" },

@@ -1,8 +1,5 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { ChevronLeftIcon } from "../icons";
 import * as styles from "./AppBar.css";
+import { AppBarBackButton } from "./AppBarBackButton";
 
 interface AppBarProps {
   title?: string;
@@ -28,23 +25,13 @@ export function AppBar({
   large,
   onBack,
 }: AppBarProps) {
-  const router = useRouter();
   const kind = accent ? "accent" : "solid";
   const isLarge = large ?? !showBack;
 
   return (
     <div className={`${styles.barClass} ${styles.bar[kind]}`}>
       <div className={`${styles.inner} ${!showBack ? styles.innerNoBack : ""}`}>
-        {showBack && (
-          <button
-            type="button"
-            className={styles.backBtn}
-            aria-label="뒤로가기"
-            onClick={onBack ?? (() => router.back())}
-          >
-            <ChevronLeftIcon color={accent ? "#fff" : "#191F28"} />
-          </button>
-        )}
+        {showBack && <AppBarBackButton accent={accent} onBack={onBack} />}
         <div
           className={`${styles.title[kind]} ${
             isLarge ? styles.titleSize.large : styles.titleSize.small

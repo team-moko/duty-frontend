@@ -1,4 +1,5 @@
-import { AppBar, CTAButton } from "@/components";
+import { AppBar } from "@/components/AppBar/AppBar";
+import { CTAButton } from "@/components/CTAButton/CTAButton";
 import { getRecommendResult } from "@/lib/recommend-result.server";
 import { ScreenResult } from "./ScreenResult";
 import * as styles from "./ScreenResult.css";
