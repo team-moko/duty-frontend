@@ -44,17 +44,24 @@ function SectionTitle({ children, sub }: { children: string; sub?: string }) {
 }
 
 function formatContribution(value: number | null): string {
-  if (value === null) return "금액 확인 필요";
+  if (value === null) return "납입 없음";
   return `연 ${Math.round(value / 10_000).toLocaleString("ko-KR")}만원`;
 }
 
 function PriorityList({ combo }: { combo: Combo }) {
   const details = [...combo.details].sort((a, b) => a.priority - b.priority);
+  const noContribution = combo.refund_rate_percent === null;
 
   return (
     <div className={`${styles.card} ${styles.cardFirst}`}>
-      <SectionTitle sub="이 순서대로 채우면 환급이 가장 커요">
-        납입 우선순위
+      <SectionTitle
+        sub={
+          noContribution
+            ? "이 순서대로 실행하면 절세 효과가 가장 커요"
+            : "이 순서대로 채우면 환급이 가장 커요"
+        }
+      >
+        {noContribution ? "실행 우선순위" : "납입 우선순위"}
       </SectionTitle>
       <div className={styles.priorityList}>
         {details.map((item, index) => {
@@ -219,23 +226,43 @@ export function ComboDetail({ rank }: { rank: number }) {
             ))}
           </div>
           <div className={styles.heroMetric}>
-            <div>
-              <span className={styles.heroMetricLabel}>예상 환급률</span>
-              <div className={styles.heroRateWrap}>
-                <span className={styles.heroRate}>
-                  {combo.refund_rate_percent ?? "-"}
-                </span>
-                {combo.refund_rate_percent !== null && (
-                  <span className={styles.heroPct}>%</span>
-                )}
-              </div>
-            </div>
-            <div className={styles.heroRefundCol}>
-              <span className={styles.heroMetricLabel}>연 환급 예상</span>
-              <span className={styles.heroRefund}>
-                {formatExpectedBenefit(combo.expected_annual_refund_krw)}
-              </span>
-            </div>
+            {combo.refund_rate_percent === null ? (
+              <>
+                <div>
+                  <span className={styles.heroMetricLabel}>
+                    {combo.expected_annual_refund_krw > 0
+                      ? "예상 절세액"
+                      : "절세 효과"}
+                  </span>
+                  <span className={styles.heroAmount}>
+                    {combo.expected_annual_refund_krw > 0
+                      ? formatExpectedBenefit(combo.expected_annual_refund_krw)
+                      : "개별 확인 필요"}
+                  </span>
+                </div>
+                <div className={styles.heroRefundCol}>
+                  <span className={styles.heroNoContribBadge}>납입 없음</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <span className={styles.heroMetricLabel}>예상 환급률</span>
+                  <div className={styles.heroRateWrap}>
+                    <span className={styles.heroRate}>
+                      {combo.refund_rate_percent}
+                    </span>
+                    <span className={styles.heroPct}>%</span>
+                  </div>
+                </div>
+                <div className={styles.heroRefundCol}>
+                  <span className={styles.heroMetricLabel}>연 환급 예상</span>
+                  <span className={styles.heroRefund}>
+                    {formatExpectedBenefit(combo.expected_annual_refund_krw)}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

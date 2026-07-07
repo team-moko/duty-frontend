@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { getTaxType } from "@/lib/taxType";
+import { getTaxType, NO_CONTRIBUTION_TAX_TYPE } from "@/lib/taxType";
 import { normalizeShareParams } from "../shareParams";
 
 // SNS 공유용 동적 OG 이미지 (1200x630 PNG).
@@ -16,9 +16,10 @@ export async function GET(request: Request) {
     rate: searchParams.get("rate") ?? undefined,
     combos: searchParams.get("combos") ?? undefined,
     strategy: searchParams.get("strategy") ?? undefined,
+    norate: searchParams.get("norate") ?? undefined,
   });
 
-  const type = getTaxType(rate);
+  const type = rate === null ? NO_CONTRIBUTION_TAX_TYPE : getTaxType(rate);
 
   // process.cwd()는 Next.js 프로젝트 루트. 커스텀 폰트 예제 방식 그대로 읽는다.
   const pretendardBold = await readFile(
@@ -76,7 +77,7 @@ export async function GET(request: Request) {
             }}
           >
             <span style={{ fontSize: 40, color: "#4B5563" }}>
-              계좌를 잘 조합하면
+              {rate === null ? "따로 납입하지 않아도" : "계좌를 잘 조합하면"}
             </span>
             <div
               style={{
@@ -86,11 +87,17 @@ export async function GET(request: Request) {
                 marginTop: 4,
               }}
             >
-              <span style={{ fontSize: 150, lineHeight: 1 }}>{rate}</span>
-              <span style={{ fontSize: 76, marginBottom: 16 }}>%</span>
+              {rate === null ? (
+                <span style={{ fontSize: 150, lineHeight: 1 }}>절세</span>
+              ) : (
+                <>
+                  <span style={{ fontSize: 150, lineHeight: 1 }}>{rate}</span>
+                  <span style={{ fontSize: 76, marginBottom: 16 }}>%</span>
+                </>
+              )}
             </div>
             <span style={{ fontSize: 40, color: "#4B5563", marginTop: 4 }}>
-              까지 돌려받을 수 있어요
+              {rate === null ? "효과를 볼 수 있어요" : "까지 돌려받을 수 있어요"}
             </span>
           </div>
 

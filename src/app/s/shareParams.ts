@@ -8,7 +8,8 @@ export const DEFAULT_STRATEGY =
   "세액공제 16.5% 구간 + 청년 비과세 혜택까지 모두 챙기는 조합이에요";
 
 export interface ShareParams {
-  rate: number;
+  /** null = 납입 없는 절세 전략(norate=1) — 환급률 대신 전략 중심으로 렌더. */
+  rate: number | null;
   combos: string[];
   strategy: string;
 }
@@ -18,10 +19,15 @@ export function normalizeShareParams(raw: {
   rate?: string;
   combos?: string;
   strategy?: string;
+  norate?: string;
 }): ShareParams {
   const parsedRate = Number(raw.rate);
   const safeRate =
-    Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : DEFAULT_RATE;
+    raw.norate === "1"
+      ? null
+      : Number.isFinite(parsedRate) && parsedRate > 0
+        ? parsedRate
+        : DEFAULT_RATE;
 
   const parsedCombos = raw.combos
     ? raw.combos

@@ -20,6 +20,15 @@ export const FALLBACK_TAX_TYPE: TaxType = {
   keywords: ["#공제_거의만렙", "#빈틈없음", "#절세_마스터"],
 };
 
+// 납입 없는 절세 전략(손익통산·분산매도 등) 전용 유형 — 환급률 구간과 무관하게 사용.
+export const NO_CONTRIBUTION_TAX_TYPE: TaxType = {
+  min: 0,
+  emoji: "🧭",
+  name: "실행형 절세 전략가",
+  tagline: "납입 없이 매도 전략만으로 세금을 줄여요",
+  keywords: ["#손익통산", "#분산매도", "#납입없이"],
+};
+
 export const TAX_TYPES: TaxType[] = [
   {
     min: 15,

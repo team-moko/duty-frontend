@@ -7,6 +7,10 @@ export function buildShareUrl(combo: Combo): string {
   const params = new URLSearchParams();
   if (combo.refund_rate_percent !== null) {
     params.set("rate", String(combo.refund_rate_percent));
+  } else {
+    // 납입 없는 전략 — rate 생략이 아니라 명시적 플래그로 전달해야
+    // /s가 기본 환급률(16.5%)로 잘못 폴백하지 않는다.
+    params.set("norate", "1");
   }
   params.set("combos", combo.details.map((detail) => detail.product).join(","));
   params.set("strategy", combo.short_strategy);
