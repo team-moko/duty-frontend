@@ -9,19 +9,20 @@ import {
   FixedTopBar,
   ShareIcon,
 } from "@/components";
+import { formatExpectedBenefit } from "@/lib/recommend";
 import { buildShareUrl } from "@/lib/share";
-import {
-  formatExpectedBenefit,
-  getRecommendResultSnapshot,
-  getServerRecommendResultSnapshot,
-  subscribeRecommendResult,
-} from "@/lib/recommend";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useSyncExternalStore, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import * as styles from "./detail.css";
 
-function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+function Reveal({
+  children,
+  delay = 0,
+}: {
+  children: ReactNode;
+  delay?: number;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -169,14 +170,8 @@ function ReasonsCard({ combo }: { combo: Combo }) {
   );
 }
 
-export function ComboDetail({ rank }: { rank: number }) {
+export function ComboDetail({ combo }: { combo: Combo | null }) {
   const router = useRouter();
-  const result = useSyncExternalStore(
-    subscribeRecommendResult,
-    getRecommendResultSnapshot,
-    getServerRecommendResultSnapshot,
-  );
-  const combo = result?.combos.find((combo) => combo.rank === rank) ?? null;
 
   // TODO(공유): 카카오톡 공유 SDK 연동 예정. 현재는 Web Share API 폴백.
   // text는 넘기지 않는다 — 일부 공유 대상이 url 뒤에 text를 이어붙여

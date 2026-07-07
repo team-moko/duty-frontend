@@ -98,25 +98,3 @@ export function isComboResponse(value: unknown): value is ComboResponse {
     typeof response.profile_summary === "string"
   );
 }
-
-export async function postRecommendCombos(
-  body: RecommendCombosRequest,
-): Promise<ComboResponse> {
-  const response = await fetch("/api/recommend/combos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data: unknown = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      "추천 결과를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
-    );
-  }
-  if (!isComboResponse(data)) {
-    throw new Error("추천 결과 형식이 올바르지 않습니다.");
-  }
-
-  return data;
-}

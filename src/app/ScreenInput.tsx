@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  postRecommendCombos,
-  type RecommendCombosRequest,
-} from "@/api/recommend";
+import type { RecommendCombosRequest } from "@/api/recommend";
+import { saveRecommendFormAction } from "@/app/recommend.actions";
 import {
   AccountToggle,
   AppBar,
@@ -17,7 +15,6 @@ import {
 } from "@/components";
 import { digitsOnly, won } from "@/lib/format";
 import { motion } from "framer-motion";
-import { saveRecommendResult } from "@/lib/recommend";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import * as styles from "./ScreenInput.css";
@@ -179,8 +176,7 @@ export function ScreenInput() {
     setSubmitError(null);
 
     try {
-      const data = await postRecommendCombos(body);
-      saveRecommendResult(data);
+      await saveRecommendFormAction(body);
       router.push("/result");
     } catch {
       setSubmitError(

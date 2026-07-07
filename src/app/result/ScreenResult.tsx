@@ -1,40 +1,16 @@
 "use client";
 
-import { AppBar, CTAButton, FixedTopBar } from "@/components";
-import {
-  formatExpectedBenefit,
-  getRecommendResultSnapshot,
-  getServerRecommendResultSnapshot,
-  subscribeRecommendResult,
-} from "@/lib/recommend";
+import type { ComboResponse } from "@/api/recommend";
+import { AppBar, FixedTopBar } from "@/components";
+import { formatExpectedBenefit } from "@/lib/recommend";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useSyncExternalStore } from "react";
 import { ComboCard } from "./ComboCard";
-import { ScreenResultEmpty } from "./ScreenResultEmpty";
 import * as styles from "./ScreenResult.css";
+import { ScreenResultEmpty } from "./ScreenResultEmpty";
 
-export function ScreenResult() {
+export function ScreenResult({ result }: { result: ComboResponse }) {
   const router = useRouter();
-  const result = useSyncExternalStore(
-    subscribeRecommendResult,
-    getRecommendResultSnapshot,
-    getServerRecommendResultSnapshot,
-  );
-
-  if (!result) {
-    return (
-      <div className={styles.screen}>
-        <AppBar title="추천 결과" accent />
-        <div className={styles.empty}>
-          <p className={styles.loading}>저장된 추천 결과가 없어요.</p>
-          <CTAButton onClick={() => router.replace("/")}>
-            정보 입력하러 가기
-          </CTAButton>
-        </div>
-      </div>
-    );
-  }
 
   // 적용 가능한 조합이 하나도 없을 때만 폴백 화면.
   // 환급률 null은 "납입 없는 절세 전략"(손익통산 등)일 수 있어 계산 실패로 단정하면 안 된다.
