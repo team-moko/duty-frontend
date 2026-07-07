@@ -44,6 +44,9 @@ export function ScreenResult() {
 
   // 납입이 없는 전략은 환급률(%) 개념이 성립하지 않아 절세액(원) 중심으로 보여준다.
   const noContribution = result.header.max_refund_rate_percent === null;
+  // 절세액까지 0이면 수치화 불가한 안내형 전략(종합과세 관리 등) — 관리 포인트 중심으로 보여준다.
+  const advisory = noContribution && result.header.max_annual_refund_krw === 0;
+  const advisoryPointCount = result.combos[0]?.details.length ?? 0;
 
   return (
     <div className={styles.screen}>
@@ -53,7 +56,23 @@ export function ScreenResult() {
       <div className={styles.hero}>
         <div className={styles.heroBody}>
           <p className={styles.persona}>{result.profile_summary}</p>
-          {noContribution ? (
+          {advisory ? (
+            <>
+              <p className={styles.lead}>세금이 늘어나기 전에</p>
+              <div className={styles.bigRateWrap}>
+                <span className={styles.bigRate}>{advisoryPointCount}</span>
+                <span className={styles.bigPct}>개</span>
+              </div>
+              <p className={styles.heroSub}>관리 포인트를 확인하세요</p>
+              <div className={styles.pill}>
+                <span className={styles.pillStrong}>납입 없이 관리 가능</span>
+                <span className={styles.pillDot} />
+                <span className={styles.pillMuted}>
+                  {result.header.applicable_combo_count}개 조합
+                </span>
+              </div>
+            </>
+          ) : noContribution ? (
             <>
               <p className={styles.lead}>지금 실행하면 연 최대</p>
               <div className={styles.bigRateWrap}>
@@ -99,7 +118,11 @@ export function ScreenResult() {
         <div className={styles.listHeader}>
           <h2 className={styles.listTitle}>유리한 조합 순위</h2>
           <span className={styles.listHint}>
-            {noContribution ? "절세액 높은 순" : "환급률 높은 순"}
+            {advisory
+              ? "추천 순"
+              : noContribution
+                ? "절세액 높은 순"
+                : "환급률 높은 순"}
           </span>
         </div>
         {result.combos.map((combo, i) => (

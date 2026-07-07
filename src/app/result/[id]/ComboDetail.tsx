@@ -229,9 +229,15 @@ export function ComboDetail({ rank }: { rank: number }) {
             {combo.refund_rate_percent === null ? (
               <>
                 <div>
-                  <span className={styles.heroMetricLabel}>예상 절세액</span>
+                  <span className={styles.heroMetricLabel}>
+                    {combo.expected_annual_refund_krw > 0
+                      ? "예상 절세액"
+                      : "절세 효과"}
+                  </span>
                   <span className={styles.heroAmount}>
-                    {formatExpectedBenefit(combo.expected_annual_refund_krw)}
+                    {combo.expected_annual_refund_krw > 0
+                      ? formatExpectedBenefit(combo.expected_annual_refund_krw)
+                      : "개별 확인 필요"}
                   </span>
                 </div>
                 <div className={styles.heroRefundCol}>
