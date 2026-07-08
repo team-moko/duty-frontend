@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { CheckIcon } from "../icons";
 import * as styles from "./Tile.css";
 
@@ -11,7 +12,12 @@ interface TileProps {
   full?: boolean;
 }
 
-export function Tile({ label, on, onClick, full = false }: TileProps) {
+export const Tile = memo(function Tile({
+  label,
+  on,
+  onClick,
+  full = false,
+}: TileProps) {
   const stateKey = on ? "on" : "off";
   return (
     <button
@@ -27,4 +33,4 @@ export function Tile({ label, on, onClick, full = false }: TileProps) {
       <span className={styles.label[stateKey]}>{label}</span>
     </button>
   );
-}
+});
