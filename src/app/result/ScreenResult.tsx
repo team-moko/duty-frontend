@@ -1,41 +1,12 @@
-"use client";
-
-import { AppBar, CTAButton, FixedTopBar } from "@/components";
-import {
-  formatExpectedBenefit,
-  getRecommendResultSnapshot,
-  getServerRecommendResultSnapshot,
-  subscribeRecommendResult,
-} from "@/lib/recommend";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import type { ComboResponse } from "@/api/recommend";
+import { AppBar } from "@/components/AppBar/AppBar";
+import { FixedTopBar } from "@/components/FixedTopBar/FixedTopBar";
+import { formatExpectedBenefit } from "@/lib/recommend";
 import { ComboCard } from "./ComboCard";
-import { ScreenResultEmpty } from "./ScreenResultEmpty";
 import * as styles from "./ScreenResult.css";
+import { ScreenResultEmpty } from "./ScreenResultEmpty";
 
-export function ScreenResult() {
-  const router = useRouter();
-  const result = useSyncExternalStore(
-    subscribeRecommendResult,
-    getRecommendResultSnapshot,
-    getServerRecommendResultSnapshot,
-  );
-
-  if (!result) {
-    return (
-      <div className={styles.screen}>
-        <AppBar title="추천 결과" accent />
-        <div className={styles.empty}>
-          <p className={styles.loading}>저장된 추천 결과가 없어요.</p>
-          <CTAButton onClick={() => router.replace("/")}>
-            정보 입력하러 가기
-          </CTAButton>
-        </div>
-      </div>
-    );
-  }
-
+export function ScreenResult({ result }: { result: ComboResponse }) {
   // 적용 가능한 조합이 하나도 없을 때만 폴백 화면.
   // 환급률 null은 "납입 없는 절세 전략"(손익통산 등)일 수 있어 계산 실패로 단정하면 안 된다.
   if (result.header.applicable_combo_count === 0) {
@@ -126,22 +97,15 @@ export function ScreenResult() {
           </span>
         </div>
         {result.combos.map((combo, i) => (
-          <motion.div
+          <div
             key={combo.rank}
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{
-              duration: 0.55,
-              ease: [0.32, 0.72, 0, 1],
-              delay: Math.min(i * 0.08, 0.24),
+            className={styles.reveal}
+            style={{
+              animationDelay: `${Math.min(i * 80, 240)}ms`,
             }}
           >
-            <ComboCard
-              combo={combo}
-              onClick={() => router.push(`/result/${combo.rank}`)}
-            />
-          </motion.div>
+            <ComboCard combo={combo} href={`/result/${combo.rank}`} />
+          </div>
         ))}
       </div>
     </div>

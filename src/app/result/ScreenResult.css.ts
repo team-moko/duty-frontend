@@ -1,5 +1,5 @@
 import { vars } from "@/styles/theme.css";
-import { style } from "@vanilla-extract/css";
+import { keyframes, style } from "@vanilla-extract/css";
 
 export const screen = style({
   minHeight: "100dvh",
@@ -143,4 +143,23 @@ export const listHint = style({
   fontSize: 13,
   fontWeight: 600,
   color: vars.color.ink3,
+});
+
+const revealIn = keyframes({
+  from: {
+    opacity: 0,
+    transform: "translateY(32px)",
+  },
+  to: {
+    opacity: 1,
+    transform: "translateY(0)",
+  },
+});
+
+export const reveal = style({
+  opacity: 0,
+  animationName: revealIn,
+  animationDuration: "550ms",
+  animationTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)",
+  animationFillMode: "forwards",
 });

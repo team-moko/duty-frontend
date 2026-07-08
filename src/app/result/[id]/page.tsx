@@ -1,3 +1,4 @@
+import { getRecommendResult } from "@/lib/recommend-result.server";
 import { notFound } from "next/navigation";
 import { ComboDetail } from "./ComboDetail";
 
@@ -10,5 +11,8 @@ export default async function ComboDetailPage({
   const rank = Number(id);
   if (!Number.isInteger(rank) || rank < 1 || rank > 5) notFound();
 
-  return <ComboDetail rank={rank} />;
+  const result = await getRecommendResult().catch(() => null);
+  const combo = result?.combos.find((item) => item.rank === rank) ?? null;
+
+  return <ComboDetail combo={combo} />;
 }

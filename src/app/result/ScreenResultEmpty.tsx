@@ -1,4 +1,7 @@
-import { AppBar, BottomBar, CTAButton, FixedTopBar } from "@/components";
+import { AppBar } from "@/components/AppBar/AppBar";
+import { BottomBar } from "@/components/BottomBar/BottomBar";
+import { CTAButton } from "@/components/CTAButton/CTAButton";
+import { FixedTopBar } from "@/components/FixedTopBar/FixedTopBar";
 import * as styles from "./ScreenResultEmpty.css";
 
 // 확인이 필요한 항목 — 디자인 핸드오프의 REQUIRED_FIELDS 라벨을 그대로 사용.

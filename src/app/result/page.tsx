@@ -1,7 +1,23 @@
+import { AppBar } from "@/components/AppBar/AppBar";
+import { CTAButton } from "@/components/CTAButton/CTAButton";
+import { getRecommendResult } from "@/lib/recommend-result.server";
 import { ScreenResult } from "./ScreenResult";
+import * as styles from "./ScreenResult.css";
 
-// 추천 결과는 sessionStorage에 있어 서버 페치가 불가 → 클라 경계(ScreenResult)로 분리하고
-// 라우트 진입점은 서버 컴포넌트로 유지한다. (docs/RSC-컨벤션.md §0)
-export default function Page() {
-  return <ScreenResult />;
+export default async function Page() {
+  const result = await getRecommendResult().catch(() => null);
+
+  if (!result) {
+    return (
+      <div className={styles.screen}>
+        <AppBar title="추천 결과" accent />
+        <div className={styles.empty}>
+          <p className={styles.loading}>저장된 입력 정보가 없어요.</p>
+          <CTAButton href="/">정보 입력하러 가기</CTAButton>
+        </div>
+      </div>
+    );
+  }
+
+  return <ScreenResult result={result} />;
 }
