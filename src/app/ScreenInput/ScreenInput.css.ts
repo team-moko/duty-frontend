@@ -114,6 +114,15 @@ export const accountIntro = style({
   letterSpacing: "-0.02em",
 });
 
+export const fieldError = style({
+  margin: "8px 0 0",
+  fontSize: 12,
+  fontWeight: 600,
+  lineHeight: 1.4,
+  color: "red",
+  letterSpacing: "-0.02em",
+});
+
 export const checkCol = style({
   display: "flex",
   flexDirection: "column",

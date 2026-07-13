@@ -1,32 +1,4 @@
-export interface RecommendCombosRequest {
-  age: number;
-  annual_salary: number;
-  income_type: "employee" | "freelancer" | "none";
-  invest_types: Array<
-    | "domestic_stock"
-    | "foreign_stock"
-    | "etf_domestic"
-    | "etf_foreign"
-    | "fund"
-    | "deposit"
-    | "bond"
-    | "reit"
-  >;
-  monthly_invest: number;
-  has_isa: boolean;
-  has_pension: boolean;
-  has_irp: boolean;
-  pension_contribution?: number;
-  irp_contribution?: number;
-  financial_income?: number;
-  risk_tolerance: "low" | "medium" | "high";
-  has_spouse?: boolean;
-  has_children?: boolean;
-  has_minor_children?: boolean;
-  foreign_stock_unrealized_profit?: number;
-  dividend_income?: number;
-  holds_high_dividend?: boolean;
-}
+export type { RecommendCombosRequest } from "@/lib/recommend-form";
 
 interface ComboProduct {
   rule_id: string;
