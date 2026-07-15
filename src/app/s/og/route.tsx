@@ -139,7 +139,7 @@ export async function GET(request: Request) {
             opacity: 0.95,
           }}
         >
-          jeolse.kr
+          getsavemate.com
         </div>
       </div>
     ),

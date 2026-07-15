@@ -11,7 +11,7 @@ type SharePageProps = {
   }>;
 };
 
-// 공유 링크 랜딩: jeolse.kr/s
+// 공유 링크 랜딩: getsavemate.com/s
 // 개인정보(이름·금액·나이·연봉)는 받지 않고, 예상 환급률(%)·계좌 조합·전략 문구만 파라미터로 렌더한다.
 export default async function SharePage({ searchParams }: SharePageProps) {
   const { rate, combos, strategy } = normalizeShareParams(await searchParams);
