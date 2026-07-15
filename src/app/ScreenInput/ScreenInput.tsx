@@ -11,7 +11,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { type FieldPath, useForm } from "react-hook-form";
 import { AccountStep } from "./AccountStep";
 import { BasicStep } from "./BasicStep";
@@ -94,12 +94,18 @@ export function ScreenInput() {
   const current = STEPS[idx]!;
   const last = idx === STEPS.length - 1;
 
+  // router.push는 기다려주지 않아 isSubmitting만으로는 이동 완료 전에 로딩이 풀린다.
+  // transition으로 감싸 /result RSC 렌더가 끝날 때까지 isPending으로 로딩을 유지한다.
+  const [isNavigating, startNavigation] = useTransition();
+
   const submitRecommend = handleSubmit(async (body) => {
     setSubmitError(null);
 
     try {
       await saveRecommendFormAction(body);
-      router.push("/result");
+      startNavigation(() => {
+        router.push("/result");
+      });
     } catch {
       setSubmitError(
         "추천 결과를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
@@ -196,8 +202,10 @@ export function ScreenInput() {
           </p>
         )}
         {last ? (
-          <CTAButton onClick={goNext} disabled={isSubmitting}>
-            {isSubmitting ? "추천 결과 불러오는 중..." : "내 절세 전략 보기"}
+          <CTAButton onClick={goNext} disabled={isSubmitting || isNavigating}>
+            {isSubmitting || isNavigating
+              ? "추천 결과 불러오는 중..."
+              : "내 절세 전략 보기"}
           </CTAButton>
         ) : (
           <div className={styles.navRow}>
