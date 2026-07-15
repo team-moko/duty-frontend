@@ -12,10 +12,31 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://duty-frontend-one.vercel.app"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://getsavemate.com"
   ),
   title: "내 절세 전략 찾기",
   description: "연봉·자산·가족 정보로 가장 유리한 절세 계좌 조합을 추천해 드려요.",
+  // 사이트 공통 OG. 대표 og:image는 일반 라우트(/og)를 URL로 연결한다.
+  // (루트에 opengraph-image 파일 컨벤션을 두면 우선순위가 더 높아 /s의 동적 OG를 덮어쓴다)
+  openGraph: {
+    title: "내 절세 전략 찾기",
+    description: "연봉·자산·가족 정보로 가장 유리한 절세 계좌 조합을 추천해 드려요.",
+    url: "/",
+    siteName: "내 절세 전략 찾기",
+    locale: "ko_KR",
+    type: "website",
+    images: [
+      {
+        url: "/og",
+        width: 1200,
+        height: 630,
+        alt: "내 절세 전략 찾기",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export const viewport: Viewport = {
