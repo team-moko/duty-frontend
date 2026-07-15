@@ -22,7 +22,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#2F6BF0",
+  // 상태바(배터리·시간) 영역이 화면 상단과 이어지도록 기본은 appBg.
+  // 상단이 파란 히어로인 라우트(결과·상세)는 page에서 themeColor를 덮어쓴다.
+  themeColor: "#F2F4F6",
 };
 
 export default function RootLayout({
