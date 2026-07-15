@@ -338,6 +338,6 @@ export const spacer = style({
 export const ctaBar = style({
   position: "sticky",
   bottom: 0,
-  padding: "14px 20px 30px",
+  padding: "14px 20px",
   background: `linear-gradient(to top, ${vars.color.appBg} 72%, rgba(242,244,246,0))`,
 });

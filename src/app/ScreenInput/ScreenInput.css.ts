@@ -138,7 +138,7 @@ export const nav = style({
   width: "100%",
   maxWidth: vars.layout.maxWidth,
   zIndex: 10,
-  padding: "14px 20px 30px",
+  padding: "14px 20px",
 });
 
 export const submitError = style({
