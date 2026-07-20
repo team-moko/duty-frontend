@@ -22,7 +22,7 @@ export async function postRecommendCombosOnServer(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-        cache: "no-store",
+        cache: "force-cache",
       },
     );
   } catch {
