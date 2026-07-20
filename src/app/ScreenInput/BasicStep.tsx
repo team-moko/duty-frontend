@@ -55,7 +55,7 @@ const AgeField = memo(function AgeField({ control }: { control: FormControl }) {
   const { errors } = useFormState({ control, name: "age" });
 
   return (
-    <FieldRow label="나이" required>
+    <FieldRow label="나이" hint="만 나이 기준" required>
       <Controller
         name="age"
         control={control}
