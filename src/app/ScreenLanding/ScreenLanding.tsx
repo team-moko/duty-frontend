@@ -1,4 +1,4 @@
-import { AccountChip, AppBar, CTAButton } from "@/components";
+import { AccountChip, AppBar, BottomBar, CTAButton } from "@/components";
 import { vars } from "@/styles/theme.css";
 import type { ReactNode } from "react";
 import * as styles from "./ScreenLanding.css";
@@ -57,7 +57,9 @@ const STEPS = [
 export function ScreenLanding() {
   return (
     <div className={styles.screen}>
-      <AppBar title="절세" bare showBack={false} />
+      <div className={styles.header}>
+        <AppBar title="절세" bare showBack={false} />
+      </div>
 
       {/* 히어로 */}
       <div className={styles.hero}>
@@ -145,12 +147,12 @@ export function ScreenLanding() {
         </p>
       </div>
 
-      {/* 하단 고정 CTA */}
-      <div className={styles.ctaBar}>
+      {/* 하단 고정 CTA — 뷰포트 하단 고정 */}
+      <BottomBar tone="white">
         <CTAButton href="/start" sub="30초면 끝나요 · 가입 불필요">
           내 절세 전략 찾기
         </CTAButton>
-      </div>
+      </BottomBar>
     </div>
   );
 }

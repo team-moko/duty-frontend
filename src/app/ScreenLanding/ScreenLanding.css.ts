@@ -8,9 +8,23 @@ export const screen = style({
   background: vars.color.white,
 });
 
+/* 고정 헤더 — appShell의 overflowX:hidden 때문에 sticky가 뷰포트 기준으로 안 붙어
+   BottomBar와 동일한 fixed 중앙정렬 패턴을 쓴다. */
+export const header = style({
+  position: "fixed",
+  top: 0,
+  left: "50%",
+  transform: "translateX(-50%)",
+  width: "100%",
+  maxWidth: vars.layout.maxWidth,
+  zIndex: 9,
+});
+
 /* 히어로 */
 export const hero = style({
-  padding: "20px 24px 40px",
+  // AppBar(52+6=58px)가 fixed로 플로우에서 빠지므로 그만큼 paddingTop을 더해 보정한다.
+  // (20 + 58 = 78) 그라데이션이 AppBar 뒤까지 자연스럽게 이어진다.
+  padding: "78px 24px 40px",
   background: `radial-gradient(130% 70% at 50% -6%, ${vars.color.blueWeak} 0%, ${vars.color.blueWeak2} 40%, ${vars.color.white} 78%)`,
 });
 
@@ -244,12 +258,4 @@ export const trustText = style({
   color: vars.color.ink3,
   lineHeight: 1.6,
   letterSpacing: "-0.02em",
-});
-
-/* 하단 고정 CTA */
-export const ctaBar = style({
-  position: "sticky",
-  bottom: 0,
-  padding: "14px 20px 30px",
-  background: `linear-gradient(180deg, rgba(255,255,255,0) 0%, ${vars.color.white} 24%)`,
 });
