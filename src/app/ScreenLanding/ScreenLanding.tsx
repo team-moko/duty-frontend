@@ -58,7 +58,7 @@ export function ScreenLanding() {
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
-        <AppBar title="절세" bare showBack={false} />
+        <AppBar title="절세" showBack={false} />
       </div>
 
       {/* 히어로 */}
