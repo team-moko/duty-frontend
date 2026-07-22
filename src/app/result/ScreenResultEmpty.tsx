@@ -86,7 +86,7 @@ export function ScreenResultEmpty() {
       </div>
 
       <BottomBar tone="app">
-        <CTAButton href="/">정보 다시 입력하기</CTAButton>
+        <CTAButton href="/start">정보 다시 입력하기</CTAButton>
       </BottomBar>
     </div>
   );
