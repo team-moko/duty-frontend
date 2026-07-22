@@ -9,7 +9,8 @@ export const screen = style({
 });
 
 /* 고정 헤더 — appShell의 overflowX:hidden 때문에 sticky가 뷰포트 기준으로 안 붙어
-   BottomBar와 동일한 fixed 중앙정렬 패턴을 쓴다. */
+   BottomBar와 동일한 fixed 중앙정렬 패턴을 쓴다.
+   배경은 투명도 없는 흰색(입력 STEP 헤더와 동일 톤). */
 export const header = style({
   position: "fixed",
   top: 0,
@@ -18,12 +19,12 @@ export const header = style({
   width: "100%",
   maxWidth: vars.layout.maxWidth,
   zIndex: 9,
+  background: vars.color.white,
 });
 
 /* 히어로 */
 export const hero = style({
-  // AppBar(52+6=58px)가 fixed로 플로우에서 빠지므로 그만큼 paddingTop을 더해 보정한다.
-  // (20 + 58 = 78) 그라데이션이 AppBar 뒤까지 자연스럽게 이어진다.
+  // AppBar(52+6=58px)가 fixed로 플로우에서 빠지므로 그만큼 paddingTop을 더해 보정한다. (20 + 58 = 78)
   padding: "78px 24px 40px",
   background: `radial-gradient(130% 70% at 50% -6%, ${vars.color.blueWeak} 0%, ${vars.color.blueWeak2} 40%, ${vars.color.white} 78%)`,
 });
