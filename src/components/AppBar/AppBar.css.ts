@@ -20,6 +20,11 @@ export const bar = styleVariants({
     zIndex: 6,
     background: "transparent",
   },
+  // 랜딩 히어로(밝은 그라데이션) 위에 얹는 투명 바 + ink 타이틀.
+  bare: {
+    zIndex: 9,
+    background: "transparent",
+  },
 });
 
 export const inner = style({
@@ -55,6 +60,7 @@ const titleBase = style({
 export const title = styleVariants({
   solid: [titleBase, { color: vars.color.ink }],
   accent: [titleBase, { color: vars.color.white }],
+  bare: [titleBase, { color: vars.color.ink }],
 });
 
 export const titleSize = styleVariants({

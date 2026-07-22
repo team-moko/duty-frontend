@@ -8,6 +8,8 @@ interface AppBarProps {
   totalSteps?: number;
   /** hero(파랑) 위에 얹는 투명 바 */
   accent?: boolean;
+  /** 투명 배경 + ink 타이틀 (랜딩 히어로 위) */
+  bare?: boolean;
   /** 뒤로가기 버튼 노출 (홈에서는 false) */
   showBack?: boolean;
   /** 타이틀 크게 (기본: 뒤로가기 없을 때 크게) */
@@ -21,11 +23,12 @@ export function AppBar({
   step,
   totalSteps,
   accent = false,
+  bare = false,
   showBack = true,
   large,
   onBack,
 }: AppBarProps) {
-  const kind = accent ? "accent" : "solid";
+  const kind = bare ? "bare" : accent ? "accent" : "solid";
   const isLarge = large ?? !showBack;
 
   return (

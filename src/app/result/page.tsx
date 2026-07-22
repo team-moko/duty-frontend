@@ -19,7 +19,7 @@ export default async function Page() {
         <AppBar title="추천 결과" accent />
         <div className={styles.empty}>
           <p className={styles.loading}>저장된 입력 정보가 없어요.</p>
-          <CTAButton href="/">정보 입력하러 가기</CTAButton>
+          <CTAButton href="/start">정보 입력하러 가기</CTAButton>
         </div>
       </div>
     );

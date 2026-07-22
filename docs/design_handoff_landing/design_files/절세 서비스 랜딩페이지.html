@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>절세 서비스 — 랜딩페이지</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif; }
+  a { color: #2F6BF0; }
+  a:hover { color: #1D52C9; }
+</style>
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <rect width="100" height="100" fill="#2F6BF0"/>
+    <g transform="translate(50,50)" fill="#fff" text-anchor="middle">
+      <text y="-3" font-size="12" font-weight="800" font-family="sans-serif">절세</text>
+      <text y="15" font-size="8" font-weight="700" font-family="sans-serif">랜딩</text>
+    </g>
+  </svg>
+</template>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="theme.jsx"></script>
+<script type="text/babel" src="screen-input2.jsx"></script>
+<script type="text/babel" src="screen-input-stepped.jsx"></script>
+<script type="text/babel" src="screen-landing.jsx"></script>
+
+<script type="text/babel">
+const W = 390;
+
+function WebFrame({ children, h, url = 'jeolse.kr', path = '' }) {
+  return (
+    <div style={{
+      width: W, height: h, background: '#fff', borderRadius: 30, overflow: 'hidden',
+      position: 'relative', display: 'flex', flexDirection: 'column',
+      boxShadow: '0 30px 70px rgba(25,31,40,0.16), 0 0 0 1px rgba(25,31,40,0.06)',
+    }}>
+      <div style={{
+        flexShrink: 0, background: '#ECEEF1', borderBottom: '1px solid #DDE1E6',
+        padding: '10px 12px 11px', display: 'flex', alignItems: 'center', gap: 9,
+      }}>
+        <div style={{
+          flex: 1, height: 38, background: '#fff', borderRadius: 19,
+          display: 'flex', alignItems: 'center', gap: 7, padding: '0 14px',
+          boxShadow: 'inset 0 0 0 1px rgba(25,31,40,0.05)',
+        }}>
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+            <rect x="1.5" y="6" width="9" height="7" rx="1.6" fill="#8B95A1"/>
+            <path d="M3.4 6V4.2a2.6 2.6 0 015.2 0V6" stroke="#8B95A1" strokeWidth="1.4" fill="none"/>
+          </svg>
+          <span style={{ fontFamily: 'Pretendard', fontSize: 14.5, fontWeight: 600, color: '#4E5968', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {url}<span style={{ color: '#B0B8C1' }}>{path}</span>
+          </span>
+          <div style={{ flex: 1 }}></div>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+            <path d="M13 8a5 5 0 11-1.5-3.6M13 1.5V5h-3.5" stroke="#8B95A1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div style={{ width: 30, height: 30, borderRadius: 7, border: '2px solid #8B95A1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontFamily: 'Pretendard', fontSize: 12, fontWeight: 800, color: '#8B95A1' }}>3</span>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 20 20" style={{ flexShrink: 0 }}>
+          <circle cx="10" cy="4" r="1.7" fill="#8B95A1"/><circle cx="10" cy="10" r="1.7" fill="#8B95A1"/><circle cx="10" cy="16" r="1.7" fill="#8B95A1"/>
+        </svg>
+      </div>
+      <div style={{ flex: 1, overflow: 'auto', position: 'relative' }}>{children}</div>
+    </div>
+  );
+}
+
+const noChrome = { background: 'transparent', boxShadow: 'none' };
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="landing" title="절세 서비스 — 랜딩페이지" subtitle="간편함 강조 · '내 절세 전략 찾기' → STEP 1 진입">
+        <DCArtboard id="land" label="랜딩 (서비스 진입)" width={W} height={1180} style={noChrome}>
+          <WebFrame h={1180} path="/"><ScreenLanding web={true} /></WebFrame>
+        </DCArtboard>
+        <DCArtboard id="st1" label="→ STEP 1 · 기본 정보" width={W} height={852} style={noChrome}>
+          <WebFrame h={852} path="/step/1"><StepScreen idx={0} /></WebFrame>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
